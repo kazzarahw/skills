@@ -1,0 +1,22 @@
+[
+  {"query": "ok that worked great. can you turn what we just did with the invoice csv cleanup into a skill so next time you just know how to do it", "should_trigger": true},
+  {"query": "I wrote a SKILL.md for our terraform conventions (it's in .claude/skills/tf-conventions) but claude never seems to use it. what's wrong with it?", "should_trigger": true},
+  {"query": "i have two skills, pr-review and security-review, that overlap a lot. can you merge them into one without losing the good parts", "should_trigger": true},
+  {"query": "is there an existing skill for writing playwright e2e tests? don't want to reinvent the wheel", "should_trigger": true},
+  {"query": "found this skill on github (someone/cool-skills@db-migrator). is it safe to install? it has a bunch of python scripts", "should_trigger": true},
+  {"query": "can you make a /release command for this repo that bumps the version, updates CHANGELOG.md, tags, and pushes? only I should be able to trigger it", "should_trigger": true},
+  {"query": "I'd like to know if my docx-report skill actually makes the output better than plain claude. can we benchmark it?", "should_trigger": true},
+  {"query": "take the gotchas section from anthropic's pdf skill and the checklist approach from superpowers and build me a skill for filling government pdf forms", "should_trigger": true},
+  {"query": "my brand-voice skill loads even when I'm just asking coding questions, it's annoying. can you tighten when it kicks in", "should_trigger": true},
+  {"query": "every week I paste the same 30-line checklist for onboarding a new microservice into chat. there has to be a better way to package this", "should_trigger": true},
+  {"query": "add a line to my CLAUDE.md saying we use pnpm, not npm", "should_trigger": false},
+  {"query": "set up a hook so prettier runs after every file edit", "should_trigger": false},
+  {"query": "build me an MCP server in TypeScript that wraps our internal ticketing API", "should_trigger": false},
+  {"query": "create a subagent definition for a security reviewer in .claude/agents with read-only tools", "should_trigger": false},
+  {"query": "what skills do I have installed right now?", "should_trigger": false},
+  {"query": "use the pdf skill to extract the tables from ~/Downloads/q3_report.pdf into a csv", "should_trigger": false},
+  {"query": "write a system prompt for our customer support chatbot that handles refunds", "should_trigger": false},
+  {"query": "can you review this pull request for security issues? gh pr 482", "should_trigger": false},
+  {"query": "I want to learn new skills in data engineering. what should I study first, spark or dbt?", "should_trigger": false},
+  {"query": "update the README to document the new --dry-run flag in scripts/deploy.py", "should_trigger": false}
+]

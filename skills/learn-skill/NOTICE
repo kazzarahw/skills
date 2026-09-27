@@ -1,0 +1,55 @@
+learn-skill
+
+This skill is a derivative work of Anthropic's skill-creator
+(https://github.com/anthropics/skills/tree/main/skills/skill-creator),
+licensed under the Apache License, Version 2.0 (see LICENSE.txt).
+
+Files taken from the original without changes:
+  agents/grader.md, agents/comparator.md, agents/analyzer.md,
+  assets/eval_review.html, eval-viewer/viewer.html,
+  scripts/__init__.py, scripts/utils.py, scripts/quick_validate.py,
+  scripts/package_skill.py, scripts/run_eval.py, scripts/run_loop.py,
+  scripts/improve_description.py, scripts/generate_report.py
+
+Files taken from the original and modified (each carries a notice at the top):
+  scripts/aggregate_benchmark.py  - candidate-first config ordering (correct delta sign
+                                    for old_skill/new_skill); computed runs_per_configuration
+  eval-viewer/generate_review.py  - finds eval_metadata.json for the run-N layout
+  references/schemas.md           - added contents list and layout note
+
+SKILL.md was rewritten, and incorporates the original's eval, grading, and
+description-optimization workflow. All other files are new.
+
+Short passages and examples in references/ were adapted (paraphrased and
+restructured) from these permissively licensed works:
+  - obra/superpowers, skills/writing-skills (MIT, Copyright (c) 2025 Jesse Vincent):
+    the "match the form to the failure" table, rationalization-table example,
+    pressure scenarios, and wording micro-test method.
+  - mattpocock/skills, writing-for-agents (MIT, Copyright (c) 2026 Matt Pocock):
+    completion criteria, leading words, and pruning ideas.
+  - vercel-labs/skills, find-skills and the skills CLI README
+    (MIT, Copyright (c) 2026 Vercel, Inc.): discovery workflow and quality signals.
+  - agentskills/agentskills documentation (Apache-2.0): gotchas and script-design
+    examples, description and evaluation practices.
+
+For the MIT-licensed works above, the following permission notice applies:
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+
+Other ideas (no text or code) came from the sources listed in references/sources.md.

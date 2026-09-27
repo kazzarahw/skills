@@ -1,0 +1,15 @@
+# Eval and research workspaces created while building skills
+*-workspace/
+
+# Packaged skills (build output; rebuild with package_skill.py)
+*.skill
+dist/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
