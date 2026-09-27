@@ -20,7 +20,7 @@ Or manually, keeping the clone as the source of truth so `git pull` updates the 
 
 ```bash
 git clone https://github.com/kazzarahw/skills.git ~/dev/skills
-ln -s ~/dev/skills/skills/learn-skill ~/.claude/skills/learn-skill
+ln -s ~/dev/skills/skills/learn-skill ~/.claude/skills/learn-skill   # replace any existing copy first
 ```
 
 For claude.ai or the Claude API, build an uploadable `.skill` file:
@@ -59,4 +59,4 @@ python3 skills/learn-skill/scripts/validate_skill.py skills/<name> --target port
 
 ## Licenses
 
-Each skill carries its own license. `learn-skill` is Apache-2.0, derived from Anthropic's skill-creator; see its `LICENSE.txt` and `NOTICE`.
+Everything here is Apache-2.0 (see [LICENSE](LICENSE)) unless a skill's own folder says otherwise. `learn-skill` is derived from Anthropic's skill-creator and includes material from MIT-licensed projects; see its `LICENSE.txt` and `NOTICE`.
