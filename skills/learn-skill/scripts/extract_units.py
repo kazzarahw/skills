@@ -12,8 +12,8 @@ Usage:
 Each unit has: id (source-id + counter, e.g. A12), file, start/end line, section (heading path),
 kind, flags, words, text. Kinds: frontmatter, step, rule, gotcha, point, code, command, template,
 table, example, prose. Flags: imperative, emphatic (MUST/NEVER/...), conditional (if/when/unless),
-rationale (because/so that), command (inline code or a path), dynamic-cmd (Claude Code
-!`command` injection, which executes if copied into a SKILL.md).
+rationale (because/so that), command (inline code or a path), dynamic-cmd (!`command`
+injection, which Claude Code executes if the line ends up in a SKILL.md).
 
 Output goes to stdout: JSON (default) or a markdown ledger with an empty Verdict column.
 Exit codes: 0 ok, 1 no input found.

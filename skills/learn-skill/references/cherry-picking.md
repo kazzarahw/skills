@@ -22,7 +22,7 @@ The goal is a skill that reads as if one careful author wrote it, where every bo
 Copy every source into `<workspace>/sources/`, including skills that are already installed. Work on copies so you never edit an installed skill in place.
 
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/fetch_skill.py <owner/repo@skill | URL | path> --dest <workspace>/sources
+python3 <skill-dir>/scripts/fetch_skill.py <owner/repo@skill | URL | path> --dest <workspace>/sources
 ```
 
 A SKILL.md the user pasted into the chat counts as a source too: save it under `sources/pasted-<name>/SKILL.md` and note in the ledger that it has no verifiable provenance.
@@ -36,7 +36,7 @@ Follow `references/vetting-skills.md` before reading any source for content. Sou
 Split each source into small, citable units: steps, rules, gotchas, templates, examples, code, tables.
 
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/extract_units.py <workspace>/sources/<copy> \
+python3 <skill-dir>/scripts/extract_units.py <workspace>/sources/<copy> \
   --source-id A --include-references --format md > <workspace>/harvest-A.md
 ```
 
@@ -57,16 +57,16 @@ Adopt freely:
 - scripts that do deterministic work and pass vetting.
 
 Reject:
-- **no-ops**: things Claude already does by default ("write clean code", "be thorough");
+- **no-ops**: things the agent already does by default ("write clean code", "be thorough");
 - generic advice with no specific action ("handle errors appropriately");
 - details tied to the source author's environment that don't transfer (their paths, their team's conventions);
 - duplicates of something you already adopted (keep the better-worded one);
 - anything the vet flagged that you can't explain;
-- content that conflicts with the target platform (for example Claude Code-only frontmatter in a skill meant for claude.ai).
+- content that conflicts with the target platform (for example Claude Code-only frontmatter in a skill meant for Codex or claude.ai).
 
 ## 5. Let the user choose
 
-Present units grouped by theme rather than by source, with your recommended picks marked and a one-line reason for each. For a handful of choices, use AskUserQuestion with `multiSelect: true` (at most four options per question, four questions per call). For more, show a compact table and ask the user to reply with the IDs they want to add or drop. Record their decisions in the ledger.
+Present units grouped by theme rather than by source, with your recommended picks marked and a one-line reason for each. For a handful of choices, use the client's structured question tool if it has one (for example Claude Code's AskUserQuestion with `multiSelect: true`, at most four options per question). For more, show a compact table and ask the user to reply with the IDs they want to add or drop. Record their decisions in the ledger.
 
 ## 6. Resolve conflicts
 

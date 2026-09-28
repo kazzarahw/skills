@@ -5,10 +5,16 @@ What this skill's guidance rests on. Read this when the user asks where a practi
 ## Specification and platform documentation
 - Agent Skills specification: https://agentskills.io/specification (frontmatter fields, name rules, progressive disclosure). Index of all pages: https://agentskills.io/llms.txt
 - agentskills.io authoring guides: best practices, optimizing descriptions, evaluating skills, and using scripts, under https://agentskills.io/skill-creation/
+- Skills CLI agent table and feature-compatibility table (per-agent skill folders; which agents support `allowed-tools`, `context: fork`, hooks): https://github.com/vercel-labs/skills (README, "Supported Agents" and "Compatibility")
+- agentskills.io client implementation guide (catalog, activation, `.agents/skills/` convention): https://agentskills.io/client-implementation/adding-skills-support
 - Claude Code skills documentation: https://code.claude.com/docs/en/skills (extension fields, locations, substitutions, dynamic context injection, content lifecycle and compaction, listing budget)
 - Claude platform, skill authoring best practices: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
 - Claude platform, skills overview (security considerations, runtime constraints by surface): https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
 - Claude prompting best practices (newer models over-trigger on aggressive wording): https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+
+## Behavior verified by running agents (September 2026)
+- Codex CLI 0.156: loads project skills from `.agents/skills/`, reads the SKILL.md with a shell command visible in `codex exec --json` output; `codex exec -` takes a prompt on stdin; ships a built-in skill-creator.
+- OpenCode 2.0: loads project skills from `.agents/skills/` through a `skill` tool visible in `opencode run --format json` output; `opencode run` takes a prompt on stdin.
 
 ## Skills this one draws on
 - Anthropic's skill-creator (Apache-2.0), the base for the eval loop, grader, comparator, analyzer, viewer, benchmark, and description-optimization scripts: https://github.com/anthropics/skills/tree/main/skills/skill-creator

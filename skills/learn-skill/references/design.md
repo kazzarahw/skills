@@ -16,15 +16,15 @@ Settle the design before writing prose; a well-worded skill with the wrong scope
 
 | The need | Better home |
 |---|---|
-| A fact or preference that applies to almost every task | `CLAUDE.md` / `AGENTS.md` (always loaded) |
+| A fact or preference that applies to almost every task | The agent's instruction file: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, ... (always loaded) |
 | Something that must happen every time, deterministically (format on save, block a command) | A hook; instructions can be ignored, hooks can't |
 | A check that a regex or validator can enforce | A script or linter, run from a hook, CI, or a skill |
 | Access to an external system with auth and state | An MCP server, optionally with a skill that teaches how to use it well |
-| A long task that needs its own context window | A subagent, or a skill with `context: fork` (Claude Code) |
+| A long task that needs its own context window | A subagent where the client has them, or in Claude Code a skill with `context: fork` |
 | A procedure or body of knowledge needed only for some tasks | **A skill** |
 | Something done once | Nothing; just do it |
 
-Signs a skill is warranted: the user keeps pasting the same instructions or checklist; a CLAUDE.md section has grown into a procedure rather than a fact; the baseline run fails in ways a written procedure would fix.
+Signs a skill is warranted: the user keeps pasting the same instructions or checklist; a section of AGENTS.md or CLAUDE.md has grown into a procedure rather than a fact; the baseline run fails in ways a written procedure would fix.
 
 ## Scope
 
@@ -41,7 +41,7 @@ A skill should cover one coherent unit of work, the way a good function does one
 | Type | Example | Needs most | How to test |
 |---|---|---|---|
 | Technique | Filling PDF forms, debugging flaky tests | A clear procedure, a working example, gotchas | Apply it to new cases and variations |
-| Reference | API conventions, schemas, a style guide | Findable structure, grep patterns, a table of contents | Can Claude retrieve and correctly apply facts? |
+| Reference | API conventions, schemas, a style guide | Findable structure, grep patterns, a table of contents | Can the agent retrieve and correctly apply facts? |
 | Discipline | TDD, verify-before-claiming-done | Bright-line rules, a rationalization table, red flags | Pressure scenarios that tempt a violation |
 | Task / workflow | Deploy, release, commit | Exact steps, validation gates; usually user-invoked | Run it end to end in a safe environment |
 | Generator | Reports, decks, boilerplate | Templates in `assets/`, format rules | Output checks: structure, content, rendering |
@@ -49,13 +49,13 @@ A skill should cover one coherent unit of work, the way a good function does one
 
 ## Invocation
 
-| Mode | Frontmatter (Claude Code) | Use for | Cost |
+| Mode | How (Claude Code example) | Use for | Cost |
 |---|---|---|---|
-| Model-invoked (default) | none | Anything Claude should reach for by itself | The description sits in context every turn |
+| Model-invoked (default) | none | Anything the agent should reach for by itself | The description sits in context every turn |
 | User-invoked only | `disable-model-invocation: true` | Side effects or timing the user must control: deploy, send, publish, delete | The user has to remember the skill exists |
 | Model-invoked only | `user-invocable: false` | Background knowledge that isn't a meaningful command | Hidden from the `/` menu |
 
-For a user-invoked skill, the description becomes a one-line summary for humans; trigger lists add nothing because Claude never sees them. These fields are Claude Code extensions (`references/platform-reference.md`).
+For a user-invoked skill, the description becomes a one-line summary for humans; trigger lists add nothing because the agent never sees them. Invocation control is a client extension: Claude Code uses the fields above, other agents have their own mechanisms or none, and in a spec-only skill the agent can always invoke it. For side-effecting skills meant for several agents, also say in the body that the skill acts only when the user explicitly asks (`references/platform-reference.md`).
 
 ## Degrees of freedom
 
@@ -77,17 +77,17 @@ Place each piece of content by how immediately the running agent needs it:
 
 Rules of thumb:
 - **The branching test**: inline what every branch needs; move behind a pointer what only some branches reach.
-- **One level deep.** Reference files should link from SKILL.md, not from other reference files, because Claude may only preview a file reached through a chain.
+- **One level deep.** Reference files should link from SKILL.md, not from other reference files, because the agent may only preview a file reached through a chain.
 - **Tables of contents** at the top of any reference file over about 100 lines, so a partial read still shows its scope.
-- **Front-load SKILL.md.** After context compaction, Claude Code re-attaches only a skill's first 5,000 tokens.
-- **Point, don't duplicate.** A pointer's wording decides whether Claude follows it. If a must-read file keeps being skipped, sharpen the pointer before inlining the content.
+- **Front-load SKILL.md.** Some clients truncate long skills; after context compaction, Claude Code re-attaches only a skill's first 5,000 tokens.
+- **Point, don't duplicate.** A pointer's wording decides whether the agent follows it. If a must-read file keeps being skipped, sharpen the pointer before inlining the content.
 
 ## Architecture patterns
 
 | Pattern | Layout | Fits |
 |---|---|---|
 | Single file | `SKILL.md` | Short techniques and conventions |
-| Router plus references | SKILL.md holds the workflow and routing; `references/<domain>.md` per domain or variant | Multiple domains, frameworks, or providers, where Claude reads only the relevant file |
+| Router plus references | SKILL.md holds the workflow and routing; `references/<domain>.md` per domain or variant | Multiple domains, frameworks, or providers, where the agent reads only the relevant file |
 | Workflow plus scripts | SKILL.md holds the steps; `scripts/` does deterministic work | File formats, validation, anything fragile |
 | Template-driven | SKILL.md holds the rules; `assets/` holds templates copied into output | Documents, reports, boilerplate |
 | Forked task | `context: fork` with an explicit task in the body | Self-contained jobs that don't need the conversation (Claude Code only) |
@@ -100,14 +100,14 @@ Write this to `<workspace>/spec.md` before drafting the skill.
 # Spec: <skill-name>
 
 ## Purpose
-<One sentence: what the skill lets Claude do, for whom.>
+<One sentence: what the skill lets the agent do, for whom.>
 
 ## Triggers
 - Should trigger: <5–8 representative user phrasings, including indirect ones>
 - Should not trigger: <3–5 near-misses and where they belong instead>
 
 ## Targets
-Platforms: <Claude Code | claude.ai | API | other agents>; allowed frontmatter accordingly.
+Target agents: <Claude Code | Codex | Cursor | Copilot | Gemini CLI | OpenCode | claude.ai/API | any>; frontmatter and syntax accordingly (spec-only unless all targets share an extension).
 Invocation: <model | user-only | model-only>. Why:
 
 ## Type and scope

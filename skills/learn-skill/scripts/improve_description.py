@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
+# Modified from anthropics/skills skill-creator (Apache-2.0): --llm-cmd lets any LLM CLI
+# generate descriptions (default remains claude -p), and the prompt no longer assumes
+# a Claude Code skill.
 """Improve a skill description based on eval results.
 
-Takes eval results (from run_eval.py) and generates an improved description
-by calling `claude -p` as a subprocess (same auth pattern as run_eval.py —
-uses the session's Claude Code auth, no separate ANTHROPIC_API_KEY needed).
+Takes eval results (from run_eval.py) and generates an improved description by
+sending a prompt to an LLM CLI: `claude -p` by default (uses the Claude Code login,
+no separate API key), or any command given with --llm-cmd that reads the prompt on
+stdin and prints the reply (for example `codex exec -`).
 """
 
 import argparse
@@ -15,6 +19,19 @@ import sys
 from pathlib import Path
 
 from scripts.utils import parse_skill_md
+
+
+def _call_llm(prompt: str, model: str | None, llm_cmd: str | None = None, timeout: int = 300) -> str:
+    """Send the prompt on stdin to --llm-cmd (a shell template; {model} is substituted),
+    or to `claude -p` when no command is given, and return the text response."""
+    if llm_cmd:
+        import shlex
+        cmd = llm_cmd.replace("{model}", shlex.quote(model or ""))
+        result = subprocess.run(["bash", "-c", cmd], input=prompt, capture_output=True, text=True, timeout=timeout)
+        if result.returncode != 0:
+            raise RuntimeError(f"llm command exited {result.returncode}\nstderr: {result.stderr[-2000:]}")
+        return result.stdout
+    return _call_claude(prompt, model, timeout)
 
 
 def _call_claude(prompt: str, model: str | None, timeout: int = 300) -> str:
@@ -53,12 +70,13 @@ def improve_description(
     current_description: str,
     eval_results: dict,
     history: list[dict],
-    model: str,
+    model: str | None,
     test_results: dict | None = None,
     log_dir: Path | None = None,
     iteration: int | None = None,
+    llm_cmd: str | None = None,
 ) -> str:
-    """Call Claude to improve the description based on eval results."""
+    """Call an LLM to improve the description based on eval results."""
     failed_triggers = [
         r for r in eval_results["results"]
         if r["should_trigger"] and not r["pass"]
@@ -76,9 +94,9 @@ def improve_description(
     else:
         scores_summary = f"Train: {train_score}"
 
-    prompt = f"""You are optimizing a skill description for a Claude Code skill called "{skill_name}". A "skill" is sort of like a prompt, but with progressive disclosure -- there's a title and description that Claude sees when deciding whether to use the skill, and then if it does use the skill, it reads the .md file which has lots more details and potentially links to other resources in the skill folder like helper files and scripts and additional documentation or examples.
+    prompt = f"""You are optimizing a skill description for an agent skill called "{skill_name}". A "skill" is sort of like a prompt, but with progressive disclosure -- there's a title and description that the agent sees when deciding whether to use the skill, and then if it does use the skill, it reads the .md file which has lots more details and potentially links to other resources in the skill folder like helper files and scripts and additional documentation or examples.
 
-The description appears in Claude's "available_skills" list. When a user sends a query, Claude decides whether to invoke the skill based solely on the title and on this description. Your goal is to write a description that triggers for relevant queries, and doesn't trigger for irrelevant ones.
+The description appears in the agent's list of available skills. When a user sends a query, the agent decides whether to invoke the skill based solely on the title and on this description. Your goal is to write a description that triggers for relevant queries, and doesn't trigger for irrelevant ones.
 
 Here's the current description:
 <current_description>
@@ -134,14 +152,14 @@ Concretely, your description should not be more than about 100-200 words, even i
 Here are some tips that we've found to work well in writing these descriptions:
 - The skill should be phrased in the imperative -- "Use this skill for" rather than "this skill does"
 - The skill description should focus on the user's intent, what they are trying to achieve, vs. the implementation details of how the skill works.
-- The description competes with other skills for Claude's attention — make it distinctive and immediately recognizable.
+- The description competes with other skills for the agent's attention — make it distinctive and immediately recognizable.
 - If you're getting lots of failures after repeated attempts, change things up. Try different sentence structures or wordings.
 
 I'd encourage you to be creative and mix up the style in different iterations since you'll have multiple opportunities to try different approaches and we'll just grab the highest-scoring one at the end. 
 
 Please respond with only the new description text in <new_description> tags, nothing else."""
 
-    text = _call_claude(prompt, model)
+    text = _call_llm(prompt, model, llm_cmd)
 
     match = re.search(r"<new_description>(.*?)</new_description>", text, re.DOTALL)
     description = match.group(1).strip().strip('"') if match else text.strip().strip('"')
@@ -171,7 +189,7 @@ Please respond with only the new description text in <new_description> tags, not
             f"important trigger words and intent coverage. Respond with only "
             f"the new description in <new_description> tags."
         )
-        shorten_text = _call_claude(shorten_prompt, model)
+        shorten_text = _call_llm(shorten_prompt, model, llm_cmd)
         match = re.search(r"<new_description>(.*?)</new_description>", shorten_text, re.DOTALL)
         shortened = match.group(1).strip().strip('"') if match else shorten_text.strip().strip('"')
 
@@ -196,7 +214,8 @@ def main():
     parser.add_argument("--eval-results", required=True, help="Path to eval results JSON (from run_eval.py)")
     parser.add_argument("--skill-path", required=True, help="Path to skill directory")
     parser.add_argument("--history", default=None, help="Path to history JSON (previous attempts)")
-    parser.add_argument("--model", required=True, help="Model for improvement")
+    parser.add_argument("--model", default=None, help="Model for improvement (passed to claude -p, or substituted for {model} in --llm-cmd)")
+    parser.add_argument("--llm-cmd", default=None, help="Shell template that reads a prompt on stdin and prints the reply (default: claude -p)")
     parser.add_argument("--verbose", action="store_true", help="Print thinking to stderr")
     args = parser.parse_args()
 
@@ -224,6 +243,7 @@ def main():
         eval_results=eval_results,
         history=history,
         model=args.model,
+        llm_cmd=args.llm_cmd,
     )
 
     if args.verbose:

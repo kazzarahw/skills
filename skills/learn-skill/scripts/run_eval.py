@@ -1,14 +1,31 @@
 #!/usr/bin/env python3
+# Modified from anthropics/skills skill-creator (Apache-2.0): added the agent-neutral
+# "command" runner (--runner command --agent-cmd ... --skills-dir ...), so trigger
+# evals work with any agent CLI that loads skills from a folder, not only claude -p;
+# each query now runs in its own folder so parallel workers can't see each other's copies.
 """Run trigger evaluation for a skill description.
 
-Tests whether a skill's description causes Claude to trigger (read the skill)
+Tests whether a skill's description causes an agent to trigger (read the skill)
 for a set of queries. Outputs results as JSON.
+
+Runners:
+  claude   (default) installs the candidate as a temporary Claude Code command file and
+           watches `claude -p` stream-json output for the Skill/Read call.
+  command  installs the candidate as a temporary skill folder in --skills-dir (default
+           .agents/skills, the cross-agent convention) and runs --agent-cmd, a shell
+           template with {query} (shell-quoted) and optionally {model}. The query counts
+           as triggered when the agent's output mentions the temporary skill's unique
+           name, so use the agent's JSON or verbose output mode. Example:
+             --agent-cmd 'codex exec --json --sandbox read-only --skip-git-repo-check {query}'
 """
 
 import argparse
 import json
 import os
 import select
+import shlex
+import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -19,17 +36,104 @@ from pathlib import Path
 from scripts.utils import parse_skill_md
 
 
-def find_project_root() -> Path:
-    """Find the project root by walking up from cwd looking for .claude/.
+RUNS_DIR = ".skill-eval-runs"
 
-    Mimics how Claude Code discovers its project root, so the command file
-    we create ends up where claude -p will look for it.
+
+def find_project_root(runner: str = "claude") -> Path:
+    """Return the folder that holds per-query run folders: the current directory.
+
+    Every query runs in its own <cwd>/.skill-eval-runs/<id>/ folder containing only its
+    temporary skill, so parallel runs can't load each other's copies (the original
+    version shared one .claude/commands/ folder across workers, and walked up to
+    ~/.claude/ when run from inside the home directory).
     """
-    current = Path.cwd()
-    for parent in [current, *current.parents]:
-        if (parent / ".claude").is_dir():
-            return parent
-    return current
+    return Path.cwd()
+
+
+INSTALLED_SKILL_DIRS = [
+    ".agents/skills", ".claude/skills", "~/.agents/skills", "~/.config/agents/skills", "~/.claude/skills",
+    "~/.codex/skills", "~/.cursor/skills", "~/.copilot/skills", "~/.gemini/skills", "~/.config/opencode/skills",
+]
+
+
+def warn_installed_copies(skill_name: str) -> None:
+    """Warn when a skill with the same name is installed where agents will also see it.
+
+    Agents often load the installed copy instead of the temporary test copy, which
+    counts as "not triggered" and makes a good description look bad.
+    """
+    found = [d for d in INSTALLED_SKILL_DIRS if (Path(d).expanduser() / skill_name / "SKILL.md").exists()]
+    if found:
+        print(f"Warning: '{skill_name}' is already installed in {', '.join(found)}. Agents that read those "
+              "folders may load the installed copy instead of the test copy, which scores as a miss. "
+              "Move it aside for the duration of the eval for accurate results.", file=sys.stderr)
+
+
+def run_single_query_command(
+    query: str,
+    skill_name: str,
+    skill_description: str,
+    timeout: int,
+    project_root: str,
+    agent_cmd: str,
+    skills_dir: str,
+    model: str | None = None,
+    trigger_regex: str | None = None,
+) -> bool:
+    """Run one query through an arbitrary agent CLI and report whether it used the skill.
+
+    Triggered means the output matches trigger_regex ({name} = the temporary skill's
+    name, regex-escaped) or, without one, simply mentions that name.
+    """
+    unique_id = uuid.uuid4().hex[:8]
+    clean_name = f"{skill_name}-skill-{unique_id}"
+    # Each query gets its own folder, so concurrent runs never see each other's copies
+    run_root = Path(project_root) / RUNS_DIR / unique_id
+    skill_dir = run_root / skills_dir / clean_name
+    indented_desc = "\n  ".join(skill_description.split("\n"))
+    skill_dir.mkdir(parents=True, exist_ok=True)
+    (skill_dir / "SKILL.md").write_text(
+        f"---\nname: {clean_name}\ndescription: |\n  {indented_desc}\n---\n\n"
+        f"# {skill_name}\n\nThis skill handles: {skill_description}\n"
+    )
+    import re
+    pattern = re.compile(trigger_regex.replace("{name}", re.escape(clean_name)) if trigger_regex else re.escape(clean_name))
+    cmd = agent_cmd.replace("{query}", shlex.quote(query)).replace("{model}", shlex.quote(model or ""))
+    process = subprocess.Popen(
+        ["bash", "-c", cmd],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        stdin=subprocess.DEVNULL,
+        cwd=run_root,
+        start_new_session=True,  # so the whole agent process tree can be killed
+    )
+    out = process.stdout
+    assert out is not None
+    seen = ""
+    try:
+        start = time.time()
+        while time.time() - start < timeout:
+            ready, _, _ = select.select([out], [], [], 1.0)
+            if ready:
+                chunk = os.read(out.fileno(), 8192)
+                if not chunk:
+                    break
+                # keep a tail long enough to catch a name split across reads
+                seen = (seen + chunk.decode("utf-8", errors="replace"))[-8192:]
+                if pattern.search(seen):
+                    return True
+            elif process.poll() is not None:
+                break
+        rest = out.read() if process.poll() is not None else b""
+        return bool(pattern.search(seen + (rest or b"").decode("utf-8", errors="replace")))
+    finally:
+        if process.poll() is None:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            process.wait()
+        shutil.rmtree(run_root, ignore_errors=True)
 
 
 def run_single_query(
@@ -50,7 +154,9 @@ def run_single_query(
     """
     unique_id = uuid.uuid4().hex[:8]
     clean_name = f"{skill_name}-skill-{unique_id}"
-    project_commands_dir = Path(project_root) / ".claude" / "commands"
+    # Each query gets its own folder, so concurrent runs never see each other's copies
+    run_root = Path(project_root) / RUNS_DIR / unique_id
+    project_commands_dir = run_root / ".claude" / "commands"
     command_file = project_commands_dir / f"{clean_name}.md"
 
     try:
@@ -86,7 +192,7 @@ def run_single_query(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
-            cwd=project_root,
+            cwd=run_root,
             env=env,
         )
 
@@ -177,8 +283,7 @@ def run_single_query(
 
         return triggered
     finally:
-        if command_file.exists():
-            command_file.unlink()
+        shutil.rmtree(run_root, ignore_errors=True)
 
 
 def run_eval(
@@ -191,23 +296,36 @@ def run_eval(
     runs_per_query: int = 1,
     trigger_threshold: float = 0.5,
     model: str | None = None,
+    runner: str = "claude",
+    agent_cmd: str | None = None,
+    skills_dir: str = ".agents/skills",
+    trigger_regex: str | None = None,
 ) -> dict:
     """Run the full eval set and return results."""
+    if runner == "command" and not agent_cmd:
+        raise ValueError("--runner command needs --agent-cmd (a shell template containing {query})")
     results = []
 
     with ProcessPoolExecutor(max_workers=num_workers) as executor:
         future_to_info = {}
         for item in eval_set:
             for run_idx in range(runs_per_query):
-                future = executor.submit(
-                    run_single_query,
-                    item["query"],
-                    skill_name,
-                    description,
-                    timeout,
-                    str(project_root),
-                    model,
-                )
+                if runner == "command":
+                    future = executor.submit(
+                        run_single_query_command,
+                        item["query"], skill_name, description, timeout, str(project_root),
+                        agent_cmd, skills_dir, model, trigger_regex,
+                    )
+                else:
+                    future = executor.submit(
+                        run_single_query,
+                        item["query"],
+                        skill_name,
+                        description,
+                        timeout,
+                        str(project_root),
+                        model,
+                    )
                 future_to_info[future] = (item, run_idx)
 
         query_triggers: dict[str, list[bool]] = {}
@@ -265,9 +383,20 @@ def main():
     parser.add_argument("--timeout", type=int, default=30, help="Timeout per query in seconds")
     parser.add_argument("--runs-per-query", type=int, default=3, help="Number of runs per query")
     parser.add_argument("--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold")
-    parser.add_argument("--model", default=None, help="Model to use for claude -p (default: user's configured model)")
+    parser.add_argument("--model", default=None, help="Model for the agent (claude runner: passed to claude -p; command runner: substituted for {model})")
+    parser.add_argument("--runner", choices=["claude", "command"], default="claude",
+                        help="claude: Claude Code's claude -p; command: any agent CLI via --agent-cmd")
+    parser.add_argument("--agent-cmd", default=None,
+                        help="Shell template for the command runner, with {query} and optional {model}")
+    parser.add_argument("--skills-dir", default=".agents/skills",
+                        help="Where the command runner installs the temporary skill, relative to cwd")
+    parser.add_argument("--trigger-regex", default=None,
+                        help="Command runner: regex that marks a trigger, with {name} for the temporary skill's name "
+                             "(default: any mention of the name)")
     parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
     args = parser.parse_args()
+    if args.runner == "command" and not args.agent_cmd:
+        parser.error("--runner command requires --agent-cmd")
 
     eval_set = json.loads(Path(args.eval_set).read_text())
     skill_path = Path(args.skill_path)
@@ -278,7 +407,8 @@ def main():
 
     name, original_description, content = parse_skill_md(skill_path)
     description = args.description or original_description
-    project_root = find_project_root()
+    project_root = find_project_root(args.runner)
+    warn_installed_copies(name)
 
     if args.verbose:
         print(f"Evaluating: {description}", file=sys.stderr)
@@ -293,6 +423,10 @@ def main():
         runs_per_query=args.runs_per_query,
         trigger_threshold=args.trigger_threshold,
         model=args.model,
+        runner=args.runner,
+        agent_cmd=args.agent_cmd,
+        skills_dir=args.skills_dir,
+        trigger_regex=args.trigger_regex,
     )
 
     if args.verbose:

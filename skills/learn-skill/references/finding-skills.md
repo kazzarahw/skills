@@ -17,14 +17,15 @@ Search before you build. An existing, well-tested skill may solve the need outri
 ```bash
 # Personal, synced, project, cross-agent, and plugin skills, each with its description.
 # (find rather than shell globs: zsh aborts on a glob that matches nothing.)
-find ~/.claude/skills .claude/skills ~/.agents/skills .agents/skills ~/.claude/plugins/cache \
-  -maxdepth 6 -name SKILL.md 2>/dev/null | while read -r f; do
+find .agents/skills ~/.agents/skills ~/.config/agents/skills ~/.codex/skills ~/.cursor/skills \
+  ~/.copilot/skills ~/.gemini/skills ~/.config/opencode/skills .claude/skills ~/.claude/skills \
+  ~/.claude/plugins/cache -maxdepth 6 -name SKILL.md 2>/dev/null | while read -r f; do
   echo "$f"
   awk '/^description:/{p=1} p && /^[A-Za-z_-]+:/ && !/^description:/{exit} p' "$f" | head -3 | cut -c1-200
 done
 ```
 
-Plugin skills appear whether or not the plugin is enabled.
+Adjust the folder list to the agents in use (`references/platform-reference.md`, "Locations"). `npx skills list` shows what the skills CLI installed, per agent; Claude Code plugin skills appear under `~/.claude/plugins/cache` whether or not the plugin is enabled.
 
 The skill listing in your own context also shows every skill available in this session.
 
@@ -40,7 +41,7 @@ Each result prints as `owner/repo@skill  N installs` followed by a skills.sh lin
 **3. Well-known publishers.** Official and widely used sources include `anthropics/skills`, `anthropics/claude-plugins-official`, `vercel-labs/agent-skills`, and `openai/skills`. To list a repo's skills without installing anything:
 
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/fetch_skill.py <owner/repo> --dest <workspace>/sources --list
+python3 <skill-dir>/scripts/fetch_skill.py <owner/repo> --dest <workspace>/sources --list
 ```
 
 **4. GitHub code search**, for skills that aren't in the registry:
@@ -69,7 +70,7 @@ Popularity measures adoption, not fit or safety. A 100K-install skill can still 
 Installing a skill makes it live in the agent immediately, with whatever tool grants and shell commands it carries. To read one, copy it into the workspace instead:
 
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/fetch_skill.py <source> --dest <workspace>/sources
+python3 <skill-dir>/scripts/fetch_skill.py <source> --dest <workspace>/sources
 ```
 
 `<source>` can be `owner/repo@skill`, `owner/repo` (with `--skill <name>`), a GitHub URL, a skills.sh URL, any git URL, a raw `SKILL.md` URL, or a local path. The script clones shallowly, copies only skill folders, never follows symlinks out of the repo, never runs anything it fetched, and writes a `.provenance.json` beside each copy (source, commit, license). Then vet it with `references/vetting-skills.md`.
@@ -93,7 +94,7 @@ Found one strong match: `react-best-practices` from vercel-labs/agent-skills
 (185K installs). It covers React and Next.js performance rules. Vet: clean,
 instructions only, no scripts.
 
-Install: npx skills add vercel-labs/agent-skills@react-best-practices -g -a claude-code
+Install: npx skills add vercel-labs/agent-skills@react-best-practices -g -a <your agent>
 More: https://skills.sh/vercel-labs/agent-skills/react-best-practices
 
 My recommendation: install it rather than building; it already covers your
@@ -107,7 +108,7 @@ When nothing fits, say so plainly and move on to building; the search was not wa
 Install only after the user agrees to that specific skill.
 
 ```bash
-npx -y skills add <owner/repo@skill> -g -a claude-code -y   # -g user scope; omit for this project only
+npx -y skills add <owner/repo@skill> -g -a <agent> -y   # e.g. -a codex -a claude-code; -g user scope, omit for this project only
 ```
 
-`-y` skips the CLI's confirmation prompts, which is why the user's explicit go-ahead matters. By default the CLI symlinks from a canonical copy; `--copy` makes independent copies. Afterwards, check the skill appears (`npx skills list`, or `/skills` in Claude Code). Skills added to `~/.claude/skills/` load in local sessions but not in Cowork or cloud sessions; see `references/platform-reference.md`.
+`-y` skips the CLI's confirmation prompts, which is why the user's explicit go-ahead matters. By default the CLI symlinks from a canonical copy; `--copy` makes independent copies. Afterwards, check the skill appears (`npx skills list`, or the agent's own skill listing, such as `/skills` in Claude Code). Hosted and cloud sessions often don't read local skill folders; see `references/platform-reference.md`.

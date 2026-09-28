@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Modified from anthropics/skills skill-creator (Apache-2.0): passes --runner, --agent-cmd,
+# --skills-dir, --trigger-regex, and --llm-cmd through, so the loop works with any agent CLI; --model is optional.
 """Run the eval + improve loop until all pass or max iterations reached.
 
 Combines run_eval.py and improve_description.py in a loop, tracking history
@@ -17,7 +19,7 @@ from pathlib import Path
 
 from scripts.generate_report import generate_html
 from scripts.improve_description import improve_description
-from scripts.run_eval import find_project_root, run_eval
+from scripts.run_eval import find_project_root, run_eval, warn_installed_copies
 from scripts.utils import parse_skill_md
 
 
@@ -54,14 +56,20 @@ def run_loop(
     runs_per_query: int,
     trigger_threshold: float,
     holdout: float,
-    model: str,
+    model: str | None,
     verbose: bool,
     live_report_path: Path | None = None,
     log_dir: Path | None = None,
+    runner: str = "claude",
+    agent_cmd: str | None = None,
+    skills_dir: str = ".agents/skills",
+    llm_cmd: str | None = None,
+    trigger_regex: str | None = None,
 ) -> dict:
     """Run the eval + improvement loop."""
-    project_root = find_project_root()
+    project_root = find_project_root(runner)
     name, original_description, content = parse_skill_md(skill_path)
+    warn_installed_copies(name)
     current_description = description_override or original_description
 
     # Split into train/test if holdout > 0
@@ -96,6 +104,10 @@ def run_loop(
             runs_per_query=runs_per_query,
             trigger_threshold=trigger_threshold,
             model=model,
+            runner=runner,
+            agent_cmd=agent_cmd,
+            skills_dir=skills_dir,
+            trigger_regex=trigger_regex,
         )
         eval_elapsed = time.time() - t0
 
@@ -205,6 +217,7 @@ def run_loop(
             model=model,
             log_dir=log_dir,
             iteration=iteration,
+            llm_cmd=llm_cmd,
         )
         improve_elapsed = time.time() - t0
 
@@ -252,11 +265,19 @@ def main():
     parser.add_argument("--runs-per-query", type=int, default=3, help="Number of runs per query")
     parser.add_argument("--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold")
     parser.add_argument("--holdout", type=float, default=0.4, help="Fraction of eval set to hold out for testing (0 to disable)")
-    parser.add_argument("--model", required=True, help="Model for improvement")
+    parser.add_argument("--model", default=None, help="Model for the agent and for improvement (claude -p --model, or {model} in the templates)")
+    parser.add_argument("--runner", choices=["claude", "command"], default="claude",
+                        help="claude: Claude Code's claude -p; command: any agent CLI via --agent-cmd")
+    parser.add_argument("--agent-cmd", default=None, help="Shell template for the command runner, with {query} and optional {model}")
+    parser.add_argument("--skills-dir", default=".agents/skills", help="Where the command runner installs the temporary skill, relative to cwd")
+    parser.add_argument("--trigger-regex", default=None, help="Command runner: regex marking a trigger, with {name} for the temporary skill's name")
+    parser.add_argument("--llm-cmd", default=None, help="Shell template that reads a prompt on stdin and prints the reply, used to propose descriptions (default: claude -p)")
     parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
     parser.add_argument("--report", default="auto", help="Generate HTML report at this path (default: 'auto' for temp file, 'none' to disable)")
     parser.add_argument("--results-dir", default=None, help="Save all outputs (results.json, report.html, log.txt) to a timestamped subdirectory here")
     args = parser.parse_args()
+    if args.runner == "command" and not args.agent_cmd:
+        parser.error("--runner command requires --agent-cmd")
 
     eval_set = json.loads(Path(args.eval_set).read_text())
     skill_path = Path(args.skill_path)
@@ -304,6 +325,11 @@ def main():
         verbose=args.verbose,
         live_report_path=live_report_path,
         log_dir=log_dir,
+        runner=args.runner,
+        agent_cmd=args.agent_cmd,
+        skills_dir=args.skills_dir,
+        llm_cmd=args.llm_cmd,
+        trigger_regex=args.trigger_regex,
     )
 
     # Save JSON output

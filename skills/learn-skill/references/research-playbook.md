@@ -1,6 +1,6 @@
 # Research playbook
 
-Research for a skill has a narrow purpose: find what Claude does not know or gets wrong for this task, and back each finding with evidence. It is not an essay. A finding earns a place in the skill only if it closes a gap from the baseline run or encodes a fact Claude couldn't infer.
+Research for a skill has a narrow purpose: find what the agent does not know or gets wrong for this task, and back each finding with evidence. It is not an essay. A finding earns a place in the skill only if it closes a gap from the baseline run or encodes a fact the agent couldn't infer.
 
 ## Contents
 - What to find out
@@ -45,7 +45,7 @@ In order of trust:
 
 ## Parallel research
 
-At Deep rigor, or for broad topics, split the sub-questions across 2–4 researcher subagents, each briefed with `agents/researcher.md` and writing to its own file (`research-<topic>.md`). Merge the results into `research.md`, removing duplicates, and verify any claims the researchers disagree on yourself. Tell the user before launching them.
+At Deep rigor, or for broad topics, split the sub-questions across 2–4 researcher sessions (subagents where available), each briefed with `agents/researcher.md` and writing to its own file (`research-<topic>.md`). Merge the results into `research.md`, removing duplicates, and verify any claims the researchers disagree on yourself. Tell the user before launching them.
 
 ## Safety
 
@@ -79,7 +79,7 @@ Write `<workspace>/research.md` in this shape:
 <Concrete, surprising facts, each with its source.>
 
 ## Baseline gaps
-<What Claude got wrong or wasted effort on without the skill, from the gap run.>
+<What the agent got wrong or wasted effort on without the skill, from the gap run.>
 
 ## Conflicts and resolutions
 <Where sources disagreed and what settled it.>
@@ -92,7 +92,7 @@ Write `<workspace>/research.md` in this shape:
 
 ## Turning findings into skill content
 
-- Include a finding only if it closes a baseline gap or encodes something Claude couldn't infer; everything else stays in `research.md`.
-- Gotchas go in the skill's SKILL.md, where Claude reads them before hitting the situation.
+- Include a finding only if it closes a baseline gap or encodes something the agent couldn't infer; everything else stays in `research.md`.
+- Gotchas go in the skill's SKILL.md, where the agent reads them before hitting the situation.
 - Pin versions in commands and note the version a fact applies to.
 - Don't put citations in the skill unless the running agent will need the link, since everything in SKILL.md is paid for on every load. When the skill covers fast-moving external facts, a short `references/sources.md` makes later re-verification easy.

@@ -3,15 +3,17 @@
 # requires-python = ">=3.9"
 # dependencies = ["pyyaml>=6"]
 # ///
-"""Lint a skill folder against the Agent Skills spec, Claude Code rules, and authoring practice.
+"""Lint a skill folder against the Agent Skills spec, client-specific rules, and authoring practice.
 
 Usage:
-  python3 validate_skill.py <skill-dir> [--target claude-code|portable] [--json] [--strict]
+  python3 validate_skill.py <skill-dir> [--target spec|claude-code|claude-upload] [--json] [--strict]
 
 Targets:
-  claude-code  Claude Code personal/project/plugin skills (all Claude Code frontmatter fields allowed).
-  portable     claude.ai uploads, the Skills API, package_skill.py, and other agents
-               (only the six spec fields; stricter name rules).
+  spec           (default) The open Agent Skills spec (agentskills.io), read by any compatible
+                 agent. Client-specific fields and syntax are warnings.
+  claude-code    Claude Code skills: its extension fields are allowed.
+  claude-upload  claude.ai uploads, the Claude Skills API, and package_skill.py: only the six
+                 spec fields, and names can't contain "anthropic" or "claude".
 
 Severities: error (must fix), warning (probably wrong), info (worth a look).
 Exit codes: 0 = no errors, 1 = errors (or warnings with --strict), 2 = bad invocation or missing PyYAML.
@@ -116,13 +118,19 @@ def iter_skill_files(root: Path):
 
 
 def check_frontmatter(fm: dict, skill_dir: Path, target: str, rep: Report) -> None:
-    allowed = SPEC_FIELDS if target == "portable" else CLAUDE_CODE_FIELDS
+    allowed = CLAUDE_CODE_FIELDS if target == "claude-code" else SPEC_FIELDS
     unknown = sorted(set(fm) - allowed)
     if unknown:
-        if target == "portable":
+        if target == "claude-upload":
             rep.add("error", "FM-UNKNOWN",
-                    f"Fields not allowed for portable targets (upload fails with a hard error): {', '.join(unknown)}. "
+                    f"Fields not allowed for claude.ai/API upload (upload fails with a hard error): {', '.join(unknown)}. "
                     f"Allowed: {', '.join(sorted(SPEC_FIELDS))}.", "SKILL.md")
+        elif target == "spec":
+            cc = sorted(set(unknown) & CLAUDE_CODE_FIELDS)
+            rep.add("warning", "FM-UNKNOWN",
+                    f"Fields outside the Agent Skills spec: {', '.join(unknown)}"
+                    + (f" ({', '.join(cc)} are Claude Code extensions)" if cc else "")
+                    + ". Other agents ignore them and some uploads reject them.", "SKILL.md")
         else:
             rep.add("warning", "FM-UNKNOWN",
                     f"Unknown fields (Claude Code silently ignores them; check spelling): {', '.join(unknown)}.",
@@ -131,7 +139,7 @@ def check_frontmatter(fm: dict, skill_dir: Path, target: str, rep: Report) -> No
     # name
     name = fm.get("name")
     if name is None:
-        if target == "portable":
+        if target != "claude-code":
             rep.add("error", "NAME-MISSING", "Missing required `name`.", "SKILL.md")
         else:
             rep.add("info", "NAME-MISSING", "No `name`; Claude Code will use the folder name.", "SKILL.md")
@@ -146,12 +154,12 @@ def check_frontmatter(fm: dict, skill_dir: Path, target: str, rep: Report) -> No
         if len(n) > 64:
             rep.add("error", "NAME-LENGTH", f"`name` is {len(n)} chars; maximum is 64.", "SKILL.md")
         if n != skill_dir.name:
-            sev = "error" if target == "portable" else "warning"
+            sev = "warning" if target == "claude-code" else "error"
             rep.add(sev, "NAME-DIR",
                     f"`name` '{n}' does not match folder name '{skill_dir.name}' (the spec requires a match).",
                     "SKILL.md")
         if re.search(r"anthropic|claude", n):
-            sev = "error" if target == "portable" else "warning"
+            sev = "error" if target == "claude-upload" else "warning"
             rep.add(sev, "NAME-RESERVED",
                     f"`name` '{n}' contains a reserved word ('anthropic' or 'claude'), rejected by claude.ai and the API.",
                     "SKILL.md")
@@ -162,9 +170,9 @@ def check_frontmatter(fm: dict, skill_dir: Path, target: str, rep: Report) -> No
     desc = fm.get("description")
     dmi = str(fm.get("disable-model-invocation", "")).lower() in {"true", "yes", "on", "1"}
     if desc is None or (isinstance(desc, str) and not desc.strip()):
-        if target == "portable" or not dmi:
+        if target != "claude-code" or not dmi:
             rep.add("error", "DESC-MISSING",
-                    "Missing `description`; Claude decides whether to load the skill from it.", "SKILL.md")
+                    "Missing `description`; the agent decides whether to load the skill from it.", "SKILL.md")
     elif not isinstance(desc, str):
         rep.add("error", "DESC-TYPE", f"`description` must be a string, got {type(desc).__name__}.", "SKILL.md")
     else:
@@ -202,7 +210,7 @@ def check_frontmatter(fm: dict, skill_dir: Path, target: str, rep: Report) -> No
                     "SKILL.md")
         if dmi and len(d) > 300:
             rep.add("info", "DESC-USER-ONLY",
-                    "Skill is user-invoked only, so Claude never sees the description; a one-line summary is enough.",
+                    "Skill is user-invoked only, so the agent never sees the description; a one-line summary is enough.",
                     "SKILL.md")
 
     comp = fm.get("compatibility")
@@ -247,8 +255,8 @@ def check_body(body: str, body_start: int, skill_dir: Path, target: str, rep: Re
                 f"SKILL.md body is {n_lines} lines; keep it under 500 and move detail to reference files.", "SKILL.md")
     if approx_tokens > 5000:
         rep.add("warning", "BODY-TOKENS",
-                f"SKILL.md body is ~{approx_tokens} tokens; aim under 5000. Claude Code keeps only the first "
-                "5000 tokens of a skill after compaction.", "SKILL.md")
+                f"SKILL.md body is ~{approx_tokens} tokens; aim under 5000. Clients may truncate long skills "
+                "(Claude Code keeps only the first 5000 tokens after compaction).", "SKILL.md")
 
     annotated = strip_fenced_code(body)
     emphatic_lines = [body_start + n - 1 for n, l, fenced in annotated if not fenced and EMPHATIC_RE.search(l)]
@@ -281,11 +289,11 @@ def check_body(body: str, body_start: int, skill_dir: Path, target: str, rep: Re
                     "since packagers can strip executable bits.", f"SKILL.md:{body_start + n - 1}")
 
     if DYNAMIC_CMD_RE.search(body):
-        sev = "warning" if target == "portable" else "info"
+        sev = "info" if target == "claude-code" else "warning"
         rep.add(sev, "DYNAMIC-CMD",
                 "Body contains !`command` dynamic context injection: it runs in the shell when the skill loads "
                 "(Claude Code only; literal text elsewhere; a non-zero exit aborts the skill).", "SKILL.md")
-    if target == "portable" and CC_SUBST_RE.search(body):
+    if target != "claude-code" and CC_SUBST_RE.search(body):
         rep.add("warning", "CC-SUBST",
                 "Body uses Claude Code substitutions ($ARGUMENTS or ${CLAUDE_...}), which stay literal outside Claude Code.",
                 "SKILL.md")
@@ -336,7 +344,7 @@ def check_files(skill_dir: Path, skill_md_text: str, target: str, rep: Report) -
                  and not (f.relative_to(skill_dir).parts and f.relative_to(skill_dir).parts[0] == "evals")]
     if len(skill_mds) > 1:
         extras = [str(f.relative_to(skill_dir)) for f in skill_mds if f.parent != skill_dir]
-        sev = "error" if target == "portable" else "warning"
+        sev = "error" if target == "claude-upload" else "warning"
         rep.add(sev, "NESTED-SKILL-MD",
                 f"Extra SKILL.md files: {', '.join(extras)}. Uploads accept exactly one; rename supporting docs.", "")
 
@@ -353,7 +361,7 @@ def check_files(skill_dir: Path, skill_md_text: str, target: str, rep: Report) -
         if rel.parts[0] in RESOURCE_DIRS and f.suffix == ".md":
             if rel_s not in skill_md_text and f.name not in skill_md_text:
                 rep.add("warning", "ORPHAN-DOC",
-                        f"{rel_s} is never mentioned in SKILL.md, so Claude won't know when to read it.", rel_s)
+                        f"{rel_s} is never mentioned in SKILL.md, so the agent won't know when to read it.", rel_s)
         elif rel.parts[0] in RESOURCE_DIRS and f.suffix != ".md" and f.name != "__init__.py":
             mentioned = rel_s in skill_md_text or f.name in skill_md_text or f.stem in skill_md_text or any(
                 (f.name in t or f.stem in t) for p, t in md_texts.items() if p != f)
@@ -418,8 +426,8 @@ def validate(skill_dir: Path, target: str) -> Report:
             if re.search(r"^\s*description:\s*[^'\">|].*:\s", fm_text, re.M):
                 hint = " The description contains ': ' - quote the value or use a '>-' block scalar."
             rep.add("error", "FM-YAML",
-                    f"Frontmatter is not valid YAML ({str(e).splitlines()[0]}).{hint} In Claude Code the skill "
-                    "would load with no description.", "SKILL.md")
+                    f"Frontmatter is not valid YAML ({str(e).splitlines()[0]}).{hint} Some clients (e.g. Claude Code) "
+                    "then load the skill with no description.", "SKILL.md")
             fm = {}
     if fm:
         check_frontmatter(fm, skill_dir, target, rep)
@@ -430,12 +438,12 @@ def validate(skill_dir: Path, target: str) -> Report:
 
 def main() -> None:
     ap = argparse.ArgumentParser(
-        description="Lint a skill folder against the Agent Skills spec, Claude Code rules, and authoring practice.",
-        epilog="Example: python3 validate_skill.py ~/.claude/skills/my-skill --target claude-code",
+        description="Lint a skill folder against the Agent Skills spec, client-specific rules, and authoring practice.",
+        epilog="Example: python3 validate_skill.py skills/my-skill   (add --target claude-code for Claude Code-only skills)",
     )
     ap.add_argument("skill_dir", type=Path, help="Path to the skill folder (the one containing SKILL.md)")
-    ap.add_argument("--target", choices=["claude-code", "portable"], default="claude-code",
-                    help="claude-code (default) or portable (claude.ai upload, API, other agents)")
+    ap.add_argument("--target", choices=["spec", "claude-code", "claude-upload"], default="spec",
+                    help="spec (default: any Agent Skills client), claude-code, or claude-upload (claude.ai / Claude API)")
     ap.add_argument("--json", action="store_true", help="Emit JSON instead of text")
     ap.add_argument("--strict", action="store_true", help="Exit non-zero on warnings too")
     ap.add_argument("--quiet", action="store_true", help="Hide info items in text output")

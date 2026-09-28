@@ -9,7 +9,7 @@
   {"query": "take the gotchas section from anthropic's pdf skill and the checklist approach from superpowers and build me a skill for filling government pdf forms", "should_trigger": true},
   {"query": "my brand-voice skill loads even when I'm just asking coding questions, it's annoying. can you tighten when it kicks in", "should_trigger": true},
   {"query": "every week I paste the same 30-line checklist for onboarding a new microservice into chat. there has to be a better way to package this", "should_trigger": true},
-  {"query": "add a line to my CLAUDE.md saying we use pnpm, not npm", "should_trigger": false},
+  {"query": "add a line to AGENTS.md saying we use pnpm, not npm", "should_trigger": false},
   {"query": "set up a hook so prettier runs after every file edit", "should_trigger": false},
   {"query": "build me an MCP server in TypeScript that wraps our internal ticketing API", "should_trigger": false},
   {"query": "create a subagent definition for a security reviewer in .claude/agents with read-only tools", "should_trigger": false},

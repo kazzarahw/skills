@@ -6,8 +6,8 @@ Usage:
 
 Scans every file for patterns associated with prompt injection, hidden text, secret and
 environment access, outbound data transfer, remote code execution, persistence, writes to agent
-memory or instruction files, destructive commands, broad tool grants, and Claude Code features
-that run things without review (dynamic !`command` injection, hooks, allowed-tools).
+memory or instruction files, destructive commands, broad tool grants, and client features that
+run things without review (allowed-tools, and Claude Code's !`command` injection and hooks).
 
 This is a high-recall first pass. It cannot judge intent: every finding needs a human or model
 judgment (is it load-bearing for the skill's stated purpose?), and a clean scan does not prove a
@@ -111,12 +111,14 @@ LINE_RULES = [
      r"|\.git/hooks/",
      "Modifies shell startup files or git hooks"),
     ("MEM-WRITE", "critical", "code",
-     r"^(?=.*(CLAUDE\.md|AGENTS\.md|\.claude/settings|\.claude/(memory|projects)|MEMORY\.md|\.cursorrules|\.windsurfrules))"
+     r"^(?=.*(CLAUDE\.md|AGENTS\.md|GEMINI\.md|copilot-instructions\.md|\.claude/settings|\.claude/(memory|projects)"
+     r"|\.codex/(config|AGENTS)|MEMORY\.md|\.cursorrules|\.cursor/rules|\.windsurfrules|\.clinerules))"
      r"(?=.*(>>|\btee\b|write_text|writeFile|appendFile|\.write\(|open\(.*['\"][wa]\+?['\"]))",
      "Writes to agent memory or instruction files (persists after the skill is removed)"),
     ("MEM-INSTRUCT", "high", "md",
      r"\b(add|append|write|insert|save|copy)\s+(this|these|the\s+following|it|them)?\s*(line|rule|text|instructions?)?\s*"
-     r"(to|into)\s+(your\s+|the\s+|the\s+user's\s+)?`?(CLAUDE\.md|AGENTS\.md|global\s+instructions|memory\s+files?|settings\.json)",
+     r"(to|into)\s+(your\s+|the\s+|the\s+user's\s+)?`?(CLAUDE\.md|AGENTS\.md|GEMINI\.md|copilot-instructions\.md|\.cursorrules|global\s+instructions|memory\s+files?"
+     r"|settings\.json|config\.toml)",
      "Tells the agent to persist instructions into memory or settings"),
 
     # Destructive commands and permission bypass
@@ -134,7 +136,8 @@ LINE_RULES = [
 ZERO_WIDTH = re.compile("[\u200b\u200c\u200d\u2060\u180e]")
 BIDI = re.compile("[\u202a-\u202e\u2066-\u2069]")
 HTML_COMMENT = re.compile(r"<!--(.*?)-->", re.S)
-COMMENT_INSTR = re.compile(r"\b(instruction|ignore|assistant|agent|claude|execute|run|send|must|always|never|you)\b", re.I)
+COMMENT_INSTR = re.compile(r"\b(instruction|ignore|assistant|agent|ai|model|llm|claude|codex|gpt|gemini|execute|run|send"
+                           r"|must|always|never|you)\b", re.I)
 B64_BLOB = re.compile(r"[A-Za-z0-9+/]{200,}={0,2}")
 DYNAMIC_CMD = re.compile(r"(^|\s)!`[^`]+`")
 BROAD_TRIGGER = re.compile(
@@ -182,7 +185,7 @@ def scan_frontmatter(text: str, rel: str, findings: list) -> None:
         add(findings, "CT-BROAD-TRIGGER", "medium", rel, 2, d.group(1)[:200],
             "Description engineered to trigger on almost any request")
     n = re.search(r"^name:\s*(.+)$", fm, re.M)
-    if n and re.search(r"official|anthropic|openai|claude", n.group(1), re.I):
+    if n and re.search(r"official|anthropic|openai|claude|codex|gemini|google|microsoft|github", n.group(1), re.I):
         add(findings, "CT-IMPERSONATE", "low", rel, 2, n.group(0),
             "Name suggests an official or vendor origin; confirm the publisher")
 

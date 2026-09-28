@@ -1,13 +1,13 @@
 # Evaluation
 
-Seeing a skill trigger shows Claude found it, not that it helped. Evaluation answers whether the skill beats the baseline (no skill, or the previous version), on which prompts, and at what cost in time and tokens.
+Seeing a skill trigger shows the agent found it, not that it helped. Evaluation answers whether the skill beats the baseline (no skill, or the previous version), on which prompts, and at what cost in time and tokens.
 
 ## Contents
 - Designing test cases
 - Coverage matrix
 - Tests by skill type
 - Workspace layout (the scripts depend on it)
-- Step 1: Spawn every run in the same turn
+- Step 1: Launch every run together
 - Step 2: Draft assertions while the runs work
 - Step 3: Capture timing as each run finishes
 - Step 4: Grade, aggregate, analyze, and open the viewer
@@ -38,7 +38,7 @@ Assertions come later, once you've seen outputs. The full schema is in `referenc
 Passing tasks doesn't mean the skill's instructions were exercised; in one study, agent runs touched only about 40% of a skill's behavioral constraints. At Deep rigor, check coverage:
 
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/extract_units.py <skill-dir> --source-id S --format md
+python3 <skill-dir>/scripts/extract_units.py <skill-dir> --source-id S --format md
 ```
 
 Map each `step`, `rule`, and `gotcha` unit to the evals that would exercise it. Add evals for high-risk units with no coverage, and delete units no plausible prompt would ever exercise.
@@ -48,8 +48,8 @@ Map each `step`, `rule`, and `gotcha` unit to the evals that would exercise it. 
 | Type | What to test |
 |---|---|
 | Technique | Applying it to new cases, variations, and cases with missing information |
-| Reference | Retrieval (does Claude find the right fact?) and correct application |
-| Discipline | Pressure scenarios (below): does Claude comply when it wants not to? |
+| Reference | Retrieval (does the agent find the right fact?) and correct application |
+| Discipline | Pressure scenarios (below): does the agent comply when it wants not to? |
 | Generator | The output itself: structure, required content, that it renders or parses |
 | Task or workflow | End to end in a safe environment, including failure paths |
 | Triggering | Should and should-not-trigger queries (`references/description-optimization.md`) |
@@ -84,9 +84,9 @@ Map each `step`, `rule`, and `gotcha` unit to the evals that would exercise it. 
 {"eval_id": 1, "eval_name": "missing-emails", "prompt": "The user's task prompt", "assertions": []}
 ```
 
-## Step 1: Spawn every run in the same turn
+## Step 1: Launch every run together
 
-For each eval, launch the candidate and the baseline run together, in one turn, so they finish around the same time; don't launch candidates first and come back for baselines. Each run is a fresh subagent, so no context from building the skill leaks into it.
+For each eval, launch the candidate and the baseline run together, so they finish around the same time; don't launch candidates first and come back for baselines. Each run is a fresh session (see "Environment adaptations" for how to get one in your client), so no context from building the skill leaks into it.
 
 Candidate run prompt:
 
@@ -121,7 +121,7 @@ Check subjective qualities such as style or design in the human review, not with
 
 ## Step 3: Capture timing as each run finishes
 
-Each subagent's completion notification includes `total_tokens` and `duration_ms`. This is the only place that data appears, so save it immediately, run by run, to `run-1/timing.json`:
+Record each run's cost as soon as it finishes, in `run-1/timing.json`. Where the numbers come from depends on the client: Claude Code's subagent completion notification includes `total_tokens` and `duration_ms` (and they aren't stored anywhere else, so save them immediately); agent CLIs usually report token usage in their JSON output (for example Codex's `turn.completed` event); otherwise record wall-clock time and leave tokens out.
 
 ```json
 {"total_tokens": 84852, "duration_ms": 23332, "total_duration_seconds": 23.3}
@@ -129,16 +129,16 @@ Each subagent's completion notification includes `total_tokens` and `duration_ms
 
 ## Step 4: Grade, aggregate, analyze, and open the viewer
 
-1. **Grade** each run with a grader subagent briefed by `agents/grader.md`, or inline. Save `grading.json` in the run folder. The `expectations` entries must use the fields `text`, `passed`, and `evidence`, because the viewer reads those exact names. Check anything mechanical (valid JSON, row counts, file properties) with a script rather than by eye; scripts are more reliable and reusable across iterations. The grader also critiques the assertions; act on its suggestions.
+1. **Grade** each run in a fresh session briefed with `agents/grader.md`, or inline. Save `grading.json` in the run folder. The `expectations` entries must use the fields `text`, `passed`, and `evidence`, because the viewer reads those exact names. Check anything mechanical (valid JSON, row counts, file properties) with a script rather than by eye; scripts are more reliable and reusable across iterations. The grader also critiques the assertions; act on its suggestions.
 2. **Aggregate**, using absolute paths, since the command runs from the skill folder:
    ```bash
-   cd ${CLAUDE_SKILL_DIR} && python3 -B -m scripts.aggregate_benchmark <abs-workspace>/iteration-N --skill-name <name>
+   cd <skill-dir> && python3 -B -m scripts.aggregate_benchmark <abs-workspace>/iteration-N --skill-name <name>
    ```
    This writes `benchmark.json` and `benchmark.md` with pass rate, time, and tokens per configuration (mean ± stddev) and the candidate-minus-baseline delta.
 3. **Analyze.** Read the benchmark as `agents/analyzer.md` ("Analyzing Benchmark Results") describes, and add your observations to the `notes` array in `benchmark.json`: assertions that pass in both configurations (they don't measure the skill), assertions that fail in both (broken or too hard), high-variance evals, and time or token outliers.
 4. **Open the viewer** before you evaluate the outputs yourself; get them in front of the human quickly.
    ```bash
-   nohup python3 ${CLAUDE_SKILL_DIR}/eval-viewer/generate_review.py <workspace>/iteration-N \
+   nohup python3 <skill-dir>/eval-viewer/generate_review.py <workspace>/iteration-N \
      --skill-name <name> --benchmark <workspace>/iteration-N/benchmark.json \
      --previous-workspace <workspace>/iteration-<N-1> > /dev/null 2>&1 &
    echo $! > <workspace>/viewer.pid   # shell variables don't survive between tool calls
@@ -161,7 +161,7 @@ Empty feedback means the output looked fine. Focus on the runs with specific com
 
 **Variance.** Single runs lie. At Deep rigor, run each configuration three times (`run-1` to `run-3`). High stddev means either a flaky assertion or instructions ambiguous enough that runs interpret them differently; read those transcripts.
 
-**Blind comparison.** To answer "is the new version actually better?", give both outputs to a comparator subagent (`agents/comparator.md`) without saying which is which, then have `agents/analyzer.md` explain why the winner won. This catches quality differences that assertions miss, for example when both outputs pass every assertion.
+**Blind comparison.** To answer "is the new version actually better?", give both outputs to a comparator session (`agents/comparator.md`) without saying which is which, then have `agents/analyzer.md` explain why the winner won. This catches quality differences that assertions miss, for example when both outputs pass every assertion.
 
 **Wording micro-tests.** Before a full eval round, check that a specific instruction's wording changes behavior:
 1. Use one fresh-context sample per call, with the realistic surrounding context (the whole skill, not the instruction alone) and a task that tempts the failure.
@@ -171,14 +171,16 @@ Empty feedback means the output looked fine. Focus on the runs with specific com
 
 ## Testing on other models
 
-A skill tuned on a large model may be too terse for a smaller one; one written for a small model may over-explain to a large one. If the skill will run on other models, repeat a subset of evals with the subagent `model` override set to each of them.
+A skill tuned on a large model may be too terse for a smaller one; one written for a small model may over-explain to a large one. If the skill will run on other models, repeat a subset of evals on each of them (a subagent model override, or the agent CLI's model flag). If it will run in several agents (Codex, Cursor, Claude Code, ...), run a subset in each, since agents differ in how they load and follow skills.
 
 ## Environment adaptations
 
-**claude.ai (no subagents).** Run each test prompt yourself, one at a time, after reading the skill's SKILL.md. This is less rigorous, since you wrote the skill and know its intent, so lean on human review. Skip baselines and benchmarks. Show each prompt and its output in the chat, save files the user must inspect, and ask for feedback inline. Skip description optimization (it needs the `claude` CLI) and blind comparison (it needs subagents).
+**Fresh sessions.** Use whatever gives each run a clean context:
+- Subagents, where the client has them (Claude Code, and others with an agent or task tool). Launch all runs in one turn.
+- Otherwise, an agent CLI in non-interactive mode, one process per run, launched in parallel as background commands. Put the run prompt in the query and make the agent work in the run folder, for example `cd <run-dir> && codex exec --json --skip-git-repo-check "<run prompt>" > outputs/transcript.jsonl`, or `opencode run --format json "<run prompt>"`. The JSON stream doubles as the transcript and usually carries token counts.
 
-**Cowork.** Subagents work, so the main flow applies; if runs time out, run them in series. There is no display: use the viewer's `--static` mode and give the user the file path. Feedback arrives as a downloaded `feedback.json`.
+**No way to start fresh sessions** (for example a chat product without subagents or a shell). Run each test prompt yourself, one at a time, after reading the skill's SKILL.md. This is less rigorous, since you wrote the skill and know its intent, so lean on human review. Skip baselines and benchmarks. Show each prompt and its output in the chat, save files the user must inspect, and ask for feedback inline. Skip blind comparison, and optimize the description by reasoning (`references/description-optimization.md`).
 
-**Headless or remote Claude Code.** Use `--static`. On WSL, `explorer.exe <path>` or `wslview <path>` opens a file in the Windows browser.
+**No display** (headless, remote, containers). Use the viewer's `--static` mode and give the user the file path; feedback then arrives as a downloaded `feedback.json`. On WSL, `explorer.exe <path>` or `wslview <path>` opens a file in the Windows browser.
 
-**Skills shipped in a plugin.** `claude plugin eval` runs with-and-without evals in isolated sessions and exits non-zero below a threshold, which suits CI. Its format differs from `evals/evals.json`.
+**CI.** Claude Code plugins can use `claude plugin eval`, which runs with-and-without evals in isolated sessions and exits non-zero below a threshold. Its format differs from `evals/evals.json`.

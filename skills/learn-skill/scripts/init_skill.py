@@ -3,7 +3,7 @@
 
 Usage:
   python3 init_skill.py <name> --path <parent-dir> [--resources scripts,references,assets]
-                        [--target claude-code|portable] [--invocation model|user|model-only]
+                        [--target spec|claude-code] [--invocation model|user|model-only]
                         [--description TEXT] [--force]
 
 The name is normalized to the spec format ("Plan Mode" -> "plan-mode"). The folder is
@@ -60,15 +60,15 @@ def skeleton(name: str, description: str | None, invocation: str, target: str, t
 def main() -> None:
     ap = argparse.ArgumentParser(
         description="Scaffold a new skill folder (SKILL.md skeleton + evals/evals.json).",
-        epilog="Example: python3 init_skill.py pdf-forms --path ~/.claude/skills --resources scripts,references",
+        epilog="Example: python3 init_skill.py pdf-forms --path skills --resources scripts,references",
     )
     ap.add_argument("name", help="Skill name; normalized to lowercase-hyphen form")
     ap.add_argument("--path", required=True, type=Path, help="Parent directory to create the skill folder in")
     ap.add_argument("--resources", default="", help=f"Comma-separated subfolders to create: {', '.join(VALID_RESOURCES)}")
-    ap.add_argument("--target", choices=["claude-code", "portable"], default="claude-code",
-                    help="claude-code allows invocation-control fields; portable keeps to the spec fields")
+    ap.add_argument("--target", choices=["spec", "claude-code"], default="spec",
+                    help="spec (default) keeps to the Agent Skills spec fields; claude-code allows its invocation-control fields")
     ap.add_argument("--invocation", choices=["model", "user", "model-only"], default="model",
-                    help="model (default): Claude and the user can invoke; user: only /name; model-only: hidden from /")
+                    help="model (default): the agent and the user can invoke; user: only /name; model-only: hidden from / (claude-code target only)")
     ap.add_argument("--description", default=None, help="Initial description text (can be refined later)")
     ap.add_argument("--force", action="store_true", help="Add missing files to an existing folder; never overwrites")
     args = ap.parse_args()
@@ -80,19 +80,16 @@ def main() -> None:
     elif len(name) > 64:
         errors.append(f"Name {name!r} is {len(name)} chars; the maximum is 64.")
     if any(w in name for w in RESERVED_WORDS):
-        msg = f"Name {name!r} contains a reserved word ({'/'.join(RESERVED_WORDS)}), rejected by claude.ai and the API."
-        if args.target == "portable":
-            errors.append(msg)
-        else:
-            print(f"Warning: {msg}", file=sys.stderr)
-    if name.lower() in {"synced", "anthropic-skills"}:
+        print(f"Warning: Name {name!r} contains {'/'.join(RESERVED_WORDS)}, which claude.ai and the Claude API reject.",
+              file=sys.stderr)
+    if args.target == "claude-code" and name.lower() in {"synced", "anthropic-skills"}:
         errors.append(f"Name {name!r} is reserved by Claude Code.")
     resources = [r.strip() for r in args.resources.split(",") if r.strip()]
     bad = [r for r in resources if r not in VALID_RESOURCES]
     if bad:
         errors.append(f"Unknown --resources value(s): {', '.join(bad)}. Valid: {', '.join(VALID_RESOURCES)}.")
-    if args.target == "portable" and args.invocation != "model":
-        print("Warning: invocation control fields are Claude Code-only; ignoring --invocation for a portable target.",
+    if args.target != "claude-code" and args.invocation != "model":
+        print("Warning: invocation-control fields are a Claude Code extension; ignoring --invocation for the spec target.",
               file=sys.stderr)
     if errors:
         for e in errors:

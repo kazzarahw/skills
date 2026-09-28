@@ -5,13 +5,14 @@
     {
       "id": 1,
       "eval_name": "new-skill-alembic",
-      "prompt": "I keep re-explaining to Claude how we write Alembic migrations at work: always autogenerate then hand-edit, never drop a column in the same release as the code change that stops using it, name revisions like 2026_09_27_add_user_email, and run `alembic check` in CI. Can you make this a skill so I stop repeating myself? It's just for me, in Claude Code.",
+      "prompt": "I keep re-explaining to my coding agents how we write Alembic migrations at work: always autogenerate then hand-edit, never drop a column in the same release as the code change that stops using it, name revisions like 2026_09_27_add_user_email, and run `alembic check` in CI. Can you make this a skill so I stop repeating myself? It's just for me, but I use both Codex and Claude Code.",
       "expected_output": "A focused, validated skill folder whose description triggers on Alembic/migration work and whose body encodes the four rules plus researched gotchas.",
       "files": [],
       "assertions": [
         "A skill folder containing SKILL.md was created, and its frontmatter name matches the folder name",
         "validate_skill.py (or an equivalent check) reports no errors for the created skill",
         "The description says what the skill does and when to use it, in third person, with no ALL-CAPS directives",
+        "The frontmatter uses only Agent Skills spec fields and the body uses no Claude Code-only syntax, so it works in both agents; validate_skill.py with the default spec target reports no FM-UNKNOWN or CC-SUBST warning",
         "The body encodes all four user rules: autogenerate then hand-edit; no column drop in the same release as the code change; the revision naming pattern; alembic check in CI",
         "The body includes at least one documented autogenerate limitation the user did not mention (for example renames detected as drop plus add, or changes autogenerate cannot detect)",
         "SKILL.md is under 500 lines"

@@ -1,126 +1,128 @@
 # Platform reference
 
-Facts about the skill format and the platforms that load it. Verified against the Agent Skills specification and the Claude Code and Claude platform docs in September 2026; platforms change, so if something behaves differently, re-check the pages listed in `references/sources.md`.
+Facts about the skill format and the agents that load it. The open Agent Skills specification is the common ground; each client adds its own locations and extensions. Verified against the spec, the skills CLI's agent table, and the Claude Code and Claude platform docs in September 2026. Clients change quickly, so if something behaves differently, re-check the pages listed in `references/sources.md`.
 
 ## Contents
-- Frontmatter: the portable spec
-- Frontmatter: Claude Code extensions
-- Which fields each destination accepts
-- Names
+- The spec: fields every agent understands
 - Locations
-- Claude Code body features
-- Skill content lifecycle in Claude Code
-- Platform runtime constraints
+- How agents load skills
+- Client-specific extensions (Claude Code in detail)
+- Where client-specific features work
+- Hosted runtimes and packaged uploads
 - Tools for checking skills
 
-## Frontmatter: the portable spec
+## The spec: fields every agent understands
 
-The Agent Skills specification (agentskills.io), accepted by Claude Code, claude.ai, the Claude API, and most other agents:
+From agentskills.io/specification:
 
 | Field | Required | Constraints |
 |---|---|---|
 | `name` | yes | 1–64 chars; lowercase `a-z`, `0-9`, `-`; no leading, trailing, or consecutive hyphens; must match the folder name |
-| `description` | yes | 1–1,024 chars; what the skill does and when to use it; no XML tags |
+| `description` | yes | 1–1,024 chars; what the skill does and when to use it |
 | `license` | no | A license name or a reference to a bundled license file |
-| `compatibility` | no | Up to 500 chars; environment requirements (product, packages, network). Most skills don't need it |
+| `compatibility` | no | Up to 500 chars; environment requirements (intended agents, packages, network) |
 | `metadata` | no | A map of string keys to string values, for your own tooling |
-| `allowed-tools` | no | Pre-approved tools, space-separated (experimental; support varies) |
+| `allowed-tools` | no | Pre-approved tools, space-separated (experimental; support and syntax vary by client) |
 
-The frontmatter must start on the file's first line with `---`.
+- The frontmatter starts on the file's first line with `---`.
+- Keep SKILL.md under about 500 lines and 5,000 tokens; put detail in `references/`, `scripts/`, and `assets/`, referenced by relative paths from the skill folder, one level deep.
+- A skill that sticks to these fields and plain markdown loads the same way in every compliant agent. Anything else is a client extension: other agents ignore unknown fields, and show client-specific syntax as literal text.
+- Clients parse leniently but inconsistently. An unquoted `: ` inside the description breaks strict YAML parsers, so quote such values or use a `>-` block scalar.
 
-## Frontmatter: Claude Code extensions
+## Locations
 
-Claude Code accepts everything above plus the fields below. It silently ignores unknown field names, so a typo in a field name fails without an error.
+The cross-agent convention is `.agents/skills/<name>/` in a project and `~/.agents/skills/<name>/` for the user; many agents read it, and more are adopting it. Per-agent folders, from the skills CLI's agent table:
+
+| Agent | Project | User |
+|---|---|---|
+| Codex | `.agents/skills/` | `~/.codex/skills/` |
+| Cursor | `.agents/skills/` | `~/.cursor/skills/` |
+| GitHub Copilot | `.agents/skills/` | `~/.copilot/skills/` |
+| Gemini CLI | `.agents/skills/` | `~/.gemini/skills/` |
+| OpenCode | `.agents/skills/` | `~/.config/opencode/skills/` |
+| Amp | `.agents/skills/` | `~/.config/agents/skills/` |
+| Cline, Warp, Zed, and others | `.agents/skills/` | `~/.agents/skills/` |
+| Claude Code | `.claude/skills/` | `~/.claude/skills/` |
+| Windsurf | `.windsurf/skills/` | `~/.codeium/windsurf/skills/` |
+| Goose | `.goose/skills/` | `~/.config/goose/skills/` |
+| Kiro CLI | `.kiro/skills/` | `~/.kiro/skills/` |
+| Roo Code | `.roo/skills/` | `~/.roo/skills/` |
+| Continue | `.continue/skills/` | `~/.continue/skills/` |
+
+`npx skills add <source> -a <agent> [-a <agent>...]` installs into the right folder for each agent, symlinked from one canonical copy; `npx skills list` shows what is installed where. When one skill should reach several agents, prefer this over hand-copying, so the copies can't drift apart.
+
+Collisions: agents generally let project skills override user skills with the same name. Two skills with overlapping *descriptions* both stay listed and compete for the same prompts, whatever their names. Some agents ship their own built-in skills (Codex, for example, includes a system skill-creator), which compete too.
+
+## How agents load skills
+
+The same three tiers everywhere:
+1. **Catalog**: the name and description of every skill, loaded at session start (roughly 50–100 tokens each). This is all the agent sees when deciding whether to use a skill.
+2. **Instructions**: the SKILL.md body, loaded when the agent (or the user) activates the skill, either by reading the file or through a dedicated skill tool.
+3. **Resources**: files the body points to, read or run only when needed.
+
+Consequences for authors: all triggering information belongs in the description; the body should put what every run needs first; and a large catalog can crowd out descriptions (Claude Code, for example, drops descriptions of rarely used skills when its listing budget overflows).
+
+## Client-specific extensions (Claude Code in detail)
+
+Claude Code has the richest set of extensions. Use them only in skills meant for Claude Code, and validate with `--target claude-code`.
 
 | Field | Effect |
 |---|---|
-| `when_to_use` | Extra trigger text appended to the description in the listing; counts toward the 1,536-char cap |
-| `disable-model-invocation: true` | Only the user can invoke it (`/name`); the description is removed from Claude's context |
-| `user-invocable: false` | Only Claude can invoke it; hidden from the `/` menu |
-| `allowed-tools` | Tools usable without a permission prompt during the turn that invokes the skill. Doesn't restrict other tools. Not gated by workspace trust |
+| `when_to_use` | Extra trigger text appended to the description; description plus this is capped at 1,536 chars in the listing |
+| `disable-model-invocation: true` | Only the user can invoke it (`/name`); the description is removed from the agent's context |
+| `user-invocable: false` | Only the agent can invoke it; hidden from the `/` menu |
+| `allowed-tools` | Tools usable without a permission prompt during the invoking turn. Doesn't restrict other tools. Not gated by workspace trust |
 | `disallowed-tools` | Tools removed while the skill is active |
-| `argument-hint` | Autocomplete hint, such as `[issue-number]` |
-| `arguments` | Named positional arguments for `$name` substitution |
+| `argument-hint`, `arguments` | Autocomplete hint; named positional arguments for `$name` substitution |
 | `model`, `effort` | Model or effort level while the skill is active |
-| `context: fork` | Run the body as a task in a separate subagent that has no conversation history; the body must contain an explicit task |
-| `agent` | Subagent type for `context: fork` (`Explore`, `Plan`, `general-purpose`, or a custom agent) |
-| `background` | With `context: fork`, `false` waits for the result in the invoking turn |
+| `context: fork`, `agent`, `background` | Run the body as a task in a separate subagent with no conversation history; the body must contain an explicit task |
 | `hooks` | Hooks registered when the skill is invoked, lasting the rest of the session |
 | `paths` | Glob patterns: auto-load only while working with matching files |
 | `shell` | `bash` (default) or `powershell` for injected commands |
 
-## Which fields each destination accepts
-
-| Destination | Allowed fields |
-|---|---|
-| Claude Code (personal, project, plugin, enterprise skills) | All of the above |
-| claude.ai upload, the Skills API, `package_skill.py`, and skills synced to Cowork or cloud sessions | Only `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`. Any other key is a hard error on upload |
-| Other agents (Codex, Cursor, Copilot, ...) | The spec fields; support for `allowed-tools` varies. `context: fork` and hooks are Claude Code-specific |
-
-For a skill meant for several destinations, keep to the spec fields and validate with `--target portable`.
-
-## Names
-
-- The folder name and `name` should match; the spec requires it.
-- For the Claude API and claude.ai: `name` can't contain "anthropic" or "claude", and neither field can contain XML tags.
-- Claude Code reserves the folder names `synced` and `anthropic-skills`, which don't load outside a plugin.
-- Prefer short, specific names: a gerund or a verb-led phrase (`processing-pdfs`, `gh-address-comments`). Avoid vague names (`helper`, `utils`) and names that collide with installed skills.
-- In Claude Code, `name` becomes the `/command`. Plugin skills are namespaced `/plugin:skill`; skills synced from claude.ai answer to `/anthropic-skills:name`, and lose their short name when a local skill has the same one.
-
-## Locations
-
-| Scope | Path | Loads in |
-|---|---|---|
-| Personal (Claude Code) | `~/.claude/skills/<name>/SKILL.md` | All local projects. Not in Cowork or cloud sessions |
-| Project (Claude Code) | `.claude/skills/<name>/SKILL.md` | That repo, including cloud sessions of it. Also found in parent directories up to the repo root; nested `.claude/skills/` load once Claude works in that subdirectory |
-| Plugin | `<plugin>/skills/<name>/SKILL.md` | Wherever the plugin is enabled |
-| Enterprise | Managed settings directory | All users of the organization |
-| claude.ai account | Uploaded or enabled on claude.ai | claude.ai, Cowork, cloud sessions, and signed-in Claude Code sessions |
-| Cross-agent convention | `.agents/skills/` (project) or `~/.agents/skills/` (user) | Agents that follow the convention; `npx skills add` manages these |
-
-When names collide in Claude Code: enterprise beats personal beats project; a skill beats a same-named file in `.claude/commands/`; plugin skills are namespaced, so both load. Two skills with overlapping *descriptions* both stay listed and compete for the same prompts, whatever their names.
-
-Claude Code watches skill folders, so edits to SKILL.md take effect in the running session. A newly created top-level skills folder needs `/reload-skills`.
-
-## Claude Code body features
-
-These don't work on claude.ai or through the API; they arrive there as literal text.
+Body features (literal text in other agents):
 
 | Feature | Behavior |
 |---|---|
-| `$ARGUMENTS`, `$0`, `$1`, `$name` | Replaced with what the user typed after `/skill-name`. If nothing consumes the arguments, they are appended as `ARGUMENTS: ...` |
-| `${CLAUDE_SKILL_DIR}` | The skill's folder. Use it to call bundled scripts from any working directory |
-| `${CLAUDE_PROJECT_DIR}`, `${CLAUDE_SESSION_ID}`, `${CLAUDE_EFFORT}` | Project root, session ID, current effort level |
-| `` !`command` `` at line start, or a ```` ```! ```` block | Runs in the shell when the skill loads; the output replaces the line before Claude sees it. A non-zero exit aborts the whole skill (append `\|\| true` if non-zero is normal). Commands pass through permission rules; pre-approve them with `allowed-tools`. Not run for skills synced from claude.ai |
-| `ultrathink` anywhere in the body | Requests deeper reasoning when the skill runs |
+| `$ARGUMENTS`, `$0`, `$1`, `$name` | Replaced with what the user typed after `/skill-name` |
+| `${CLAUDE_SKILL_DIR}`, `${CLAUDE_PROJECT_DIR}`, `${CLAUDE_SESSION_ID}`, `${CLAUDE_EFFORT}` | Skill folder, project root, session ID, effort level |
+| `` !`command` `` at line start, or a ```` ```! ```` block | Runs in the shell when the skill loads; the output replaces the line. A non-zero exit aborts the skill (append `\|\| true` if non-zero is normal). Not run for skills synced from claude.ai |
 
-The pattern that lets a bundled script run without a permission prompt:
+Other Claude Code behavior worth knowing:
+- After context compaction, a skill is re-attached with only its first 5,000 tokens, within a shared 25,000-token budget.
+- Skills under `~/.claude/skills/synced/` come from the user's claude.ai account and are overwritten by the next sync; the names `synced` and `anthropic-skills` are reserved.
+- Name precedence: enterprise over personal over project; plugin skills are namespaced `/plugin:skill`.
+- Edits to SKILL.md take effect in the running session; a newly created top-level skills folder needs `/reload-skills`.
+- Cloud and Cowork sessions don't read `~/.claude/skills/`; they load skills enabled on the claude.ai account, plus project skills committed to the repo.
 
-```yaml
-allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/render.sh *)
-```
-with the body telling Claude to run `${CLAUDE_SKILL_DIR}/scripts/render.sh <file>`.
+For other agents, check their documentation for equivalents such as invocation control, argument passing, or a skill-folder variable. When a skill must work across agents, express these needs in plain instructions ("run `scripts/x.py` from this skill's folder") instead of client syntax.
 
-## Skill content lifecycle in Claude Code
+## Where client-specific features work
 
-- Only names and descriptions load at startup. The listing budget is about 1% of the context window; when it overflows, descriptions of the least-used skills are dropped first.
-- On invocation, the rendered SKILL.md enters the conversation once and stays there; the file isn't re-read on later turns.
-- After compaction, the most recent invocation of each skill is re-attached, keeping only its first 5,000 tokens, within a shared 25,000-token budget filled from the most recently used skill. Keep what matters most near the top.
-- `allowed-tools` grants last only for the turn that invoked the skill.
+From the skills CLI's compatibility table (a sample):
 
-## Platform runtime constraints
+| Feature | Supported by |
+|---|---|
+| Basic skills (the spec) | Every agent listed above |
+| `allowed-tools` | Most agents, including Claude Code, Codex, Cursor, OpenCode, Copilot; not Kiro CLI or Zencoder |
+| `context: fork` | Claude Code only |
+| Hooks | Claude Code, Cline, Kiro CLI |
 
-| Surface | Network | Packages |
-|---|---|---|
-| Claude API (code execution) | None | Preinstalled only; no runtime installs |
-| claude.ai | Full, partial, or none, depending on user and admin settings | Can install from PyPI and npm when network is allowed |
-| Claude Code | Same as any local program | Install into a local environment (a venv, `uv run`, `npx`), not globally |
+## Hosted runtimes and packaged uploads
 
-Skills don't sync between surfaces: a skill uploaded to claude.ai must be uploaded separately to the API, and personal Claude Code skills don't reach claude.ai unless uploaded there. A skill that needs network access or particular packages should say so in `compatibility` and in its body.
+Some destinations take a packaged skill rather than a folder on disk:
+
+| Destination | Notes |
+|---|---|
+| claude.ai and the Claude API | Upload a `.skill` file (`scripts/package_skill.py`). Only the six spec fields are accepted; any other key is a hard error. `name` can't contain "anthropic" or "claude"; no XML tags in either field. Exactly one SKILL.md per skill. Uploads don't sync between claude.ai and the API. Validate with `--target claude-upload` |
+| Sandboxed code-execution runtimes | May have no network access and no runtime package installs (the Claude API's code execution has neither); claude.ai's network access depends on admin settings |
+| Local agents (CLIs, IDEs) | Same network and filesystem access as any local program; install dependencies into a local environment (a venv, `uv run`, `npx`), not globally |
+
+A skill that needs network access or particular packages should say so in `compatibility` and in its body.
 
 ## Tools for checking skills
 
-- `python3 ${CLAUDE_SKILL_DIR}/scripts/validate_skill.py <dir> --target claude-code|portable`: this skill's linter.
-- `claude plugin validate <skills-dir>`: Claude Code's own frontmatter parse check.
-- `/skills` lists loaded skills; `/context` shows what the listing costs; `/skill-doctor` reports per-skill cost and usage; `--debug` shows frontmatter parse errors.
-- `claude plugin eval`: with-and-without evals for skills shipped in a plugin, suitable for CI.
+- `python3 <skill-dir>/scripts/validate_skill.py <dir> [--target spec|claude-code|claude-upload]`: this skill's linter.
+- `skills-ref validate <dir>`: the Agent Skills reference validator.
+- `npx skills add <path> --list`: confirms the skills CLI can discover the skill.
+- Claude Code: `claude plugin validate <skills-dir>` (frontmatter parse check), `/skills`, `/context`, `/skill-doctor`, and `claude plugin eval` for with-and-without evals in CI.

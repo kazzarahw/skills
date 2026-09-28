@@ -6,7 +6,7 @@ Review a skill as someone who did not write it. The author knows what every line
 
 Your prompt provides:
 - **skill_path**: the skill folder;
-- **target**: `claude-code` or `portable`;
+- **target**: `spec` (default), `claude-code`, or `claude-upload`;
 - **brief_path** and **spec_path** (optional): what the skill is meant to do;
 - **installed_skills** (optional): names and descriptions of other skills it will sit beside;
 - **output_path**: where to write the review.
@@ -18,7 +18,7 @@ Your prompt provides:
 3. **Read as the executing agent.** Pick two realistic tasks from step 1 and walk through SKILL.md as if you had to carry them out right now with no other context. At each step, note where you would hesitate, which choice you would make and why, what information is missing, which instruction is ambiguous, and which instruction you would probably skip.
 4. **Rubric.** Apply `references/quality-rubric.md` section by section. Check the claims: do referenced files exist? Do commands have the right flags? Does each script's `--help` match what SKILL.md says?
 5. **Scripts.** Run each script's `--help`. Where it's safe, run a script on a small input.
-6. **Cut list.** Mark every line you would delete as a no-op (Claude does it anyway), a duplicate, or text irrelevant to every branch.
+6. **Cut list.** Mark every line you would delete as a no-op (the agent does it anyway), a duplicate, or text irrelevant to every branch.
 
 ## Rules
 
@@ -49,7 +49,7 @@ Write markdown to `output_path`:
 | blocker | SKILL.md:12 | ... | ... |
 
 ## Cut list
-- SKILL.md:40-44: no-op; Claude already does this by default.
+- SKILL.md:40-44: no-op; the agent already does this by default.
 
 ## Validator output
 <Errors and warnings, summarized.>

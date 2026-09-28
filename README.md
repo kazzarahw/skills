@@ -1,6 +1,6 @@
 # skills
 
-Custom [Agent Skills](https://agentskills.io) for Claude Code and other skills-compatible agents.
+Custom [Agent Skills](https://agentskills.io), written to the open spec so they work in any skills-compatible agent (Codex, Claude Code, Cursor, Copilot, Gemini CLI, OpenCode, and others).
 
 | Skill | What it does |
 |---|---|
@@ -11,17 +11,20 @@ Custom [Agent Skills](https://agentskills.io) for Claude Code and other skills-c
 With the [skills CLI](https://github.com/vercel-labs/skills):
 
 ```bash
-npx skills add kazzarahw/skills@learn-skill -g -a claude-code
+npx skills add kazzarahw/skills@learn-skill -g -a codex -a claude-code
 ```
 
-Drop `-g` to install into the current project only, or change `-a` to target another agent.
+List every agent you use with `-a`; the CLI installs into each agent's skills folder from one shared copy. Drop `-g` to install into the current project only.
 
 Or manually, keeping the clone as the source of truth so `git pull` updates the skill:
 
 ```bash
 git clone https://github.com/kazzarahw/skills.git ~/dev/skills
-ln -s ~/dev/skills/skills/learn-skill ~/.claude/skills/learn-skill   # replace any existing copy first
+ln -s ~/dev/skills/skills/learn-skill ~/.agents/skills/learn-skill   # agents that read ~/.agents/skills
+ln -s ~/dev/skills/skills/learn-skill ~/.claude/skills/learn-skill   # Claude Code
 ```
+
+Other agents use their own user folders (for example `~/.codex/skills`, `~/.config/opencode/skills`); see `skills/learn-skill/references/platform-reference.md`. Replace any existing copy before linking.
 
 For claude.ai or the Claude API, build an uploadable `.skill` file:
 
@@ -42,7 +45,7 @@ skills/<skill-name>/
 
 ## Adding a skill
 
-Ask Claude to use `learn-skill` (for example, "turn this workflow into a skill"), or scaffold one directly:
+Ask your agent to use `learn-skill` (for example, "turn this workflow into a skill"), or scaffold one directly:
 
 ```bash
 python3 skills/learn-skill/scripts/init_skill.py <name> --path skills
@@ -51,8 +54,9 @@ python3 skills/learn-skill/scripts/init_skill.py <name> --path skills
 Check it before committing:
 
 ```bash
-python3 skills/learn-skill/scripts/validate_skill.py skills/<name>             # Claude Code
-python3 skills/learn-skill/scripts/validate_skill.py skills/<name> --target portable   # claude.ai, API, other agents
+python3 skills/learn-skill/scripts/validate_skill.py skills/<name>                          # open spec (any agent)
+python3 skills/learn-skill/scripts/validate_skill.py skills/<name> --target claude-code      # Claude Code-only skills
+python3 skills/learn-skill/scripts/validate_skill.py skills/<name> --target claude-upload    # before uploading to claude.ai or the Claude API
 ```
 
 `validate_skill.py` needs PyYAML (`pip install pyyaml`, or run it with `uv run`).

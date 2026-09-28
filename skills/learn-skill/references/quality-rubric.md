@@ -15,8 +15,8 @@ Use this to review a skill, your own or someone else's. Rate each finding **bloc
 
 ## B. Value
 
-- [ ] Each section closes a gap seen in a baseline run, or encodes knowledge Claude couldn't infer.
-- [ ] No no-ops: nothing Claude already does by default.
+- [ ] Each section closes a gap seen in a baseline run, or encodes knowledge the agent couldn't infer.
+- [ ] No no-ops: nothing the agent already does by default.
 - [ ] Content is specific to this domain or environment, not generic best practice.
 - [ ] Gotchas are present, concrete, and in SKILL.md.
 - [ ] It is grounded in named sources, the user's material, or tested behavior rather than general knowledge.
@@ -49,7 +49,7 @@ Use this to review a skill, your own or someone else's. Rate each finding **bloc
 - [ ] No interactive prompts; `--help` is useful; errors name the valid options.
 - [ ] Data goes to stdout and diagnostics to stderr; output size is bounded.
 - [ ] Dependencies are declared (PEP 723 or equivalent) and pinned where it matters.
-- [ ] Scripts are invoked through their interpreter, with paths relative to the skill folder or `${CLAUDE_SKILL_DIR}`.
+- [ ] Scripts are invoked through their interpreter, with paths relative to the skill folder or `<skill-dir>`.
 
 ## F. Safety and trust
 
@@ -61,8 +61,8 @@ Use this to review a skill, your own or someone else's. Rate each finding **bloc
 
 ## G. Portability
 
-- [ ] Frontmatter is valid for every target platform (`--target portable` if it goes beyond Claude Code).
-- [ ] Claude Code-only features are absent from portable skills, or degrade gracefully.
+- [ ] Frontmatter is valid for every target agent (`validate_skill.py` default spec target; `--target claude-code` or `claude-upload` where applicable).
+- [ ] Client-specific features (Claude Code's substitutions, `!` injection, invocation fields) are absent from multi-agent skills, or degrade gracefully.
 - [ ] Paths use forward slashes; runtime requirements are stated in the body or in `compatibility`.
 
 ## H. Evidence

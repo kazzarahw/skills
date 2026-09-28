@@ -1,6 +1,6 @@
 # Bundling scripts
 
-Scripts turn fragile or repetitive work into one reliable command. Claude runs them without reading their source, so only their output costs context.
+Scripts turn fragile or repetitive work into one reliable command. The agent runs them without reading their source, so only their output costs context.
 
 ## Contents
 - When to write a script
@@ -47,21 +47,21 @@ Declare dependencies inside the script so it runs with one command and no setup 
 An agent reads stdout and stderr to decide its next step. Design for that reader:
 
 - **No interactive prompts.** Agents run in non-interactive shells, and a prompt hangs forever. Take all input through flags, environment variables, or stdin. When a required input is missing, fail with an error that shows the usage.
-- **`--help`** that states the purpose, the flags, and an example or two. It is how Claude learns the interface, so keep it short.
+- **`--help`** that states the purpose, the flags, and an example or two. It is how the agent learns the interface, so keep it short.
 - **Errors that say what to do**: what went wrong, what was expected, and the valid options ("--format must be one of: json, csv, table; got 'xml'").
 - **Structured output.** JSON or CSV on stdout; progress and warnings on stderr, so the data stays parseable.
 - **Bounded output.** Harnesses truncate long tool output (often past 10–30K characters). Default to a summary, and offer `--limit`/`--offset` or `--output FILE` for more.
 - **Meaningful exit codes**, documented in `--help`: 0 for success, and distinct codes for distinct failures.
 - **Idempotent where possible.** Agents retry. "Create if missing" beats "fail if it exists".
 - **Safe defaults.** Offer `--dry-run` for anything stateful, and require an explicit flag (`--force`) for destructive actions.
-- **Solve, don't punt.** Handle the expected failures (missing file, permission denied, bad input) inside the script instead of crashing and leaving Claude to diagnose a traceback.
+- **Solve, don't punt.** Handle the expected failures (missing file, permission denied, bad input) inside the script instead of crashing and leaving the agent to diagnose a traceback.
 - **No unexplained constants.** `TIMEOUT = 30  # typical request completes in <5s; 30 covers slow links` rather than a bare 47.
 
 ## Referencing scripts from SKILL.md
 
-- Say whether Claude should **run** a script ("Run `scripts/fill.py` to fill the form") or **read** it as reference ("See `scripts/fill.py` for the field-mapping algorithm"). Running is the norm.
+- Say whether the agent should **run** a script ("Run `scripts/fill.py` to fill the form") or **read** it as reference ("See `scripts/fill.py` for the field-mapping algorithm"). Running is the norm.
 - Call scripts through their interpreter (`python3 scripts/x.py`, `bash scripts/x.sh`). Some packagers strip executable bits, and a bare `scripts/x.sh` then fails with "Permission denied".
-- Paths are relative to the skill folder. In Claude Code, `${CLAUDE_SKILL_DIR}/scripts/x.py` works from any working directory, and the same variable in `allowed-tools` lets the script run without a permission prompt (`references/platform-reference.md`).
+- Paths are relative to the skill folder, which agents resolve against the skill's location. Some clients also expose the folder as a variable that works from any working directory (Claude Code: `${CLAUDE_SKILL_DIR}`, which in `allowed-tools` also lets the script run without a permission prompt); use such variables only in skills meant for that client (`references/platform-reference.md`).
 - List each script with a one-line purpose and point to `--help` for its flags, rather than documenting every flag in SKILL.md.
 - Use forward slashes, even on Windows.
 - State what must already be installed ("requires Node.js 18+"), and use the `compatibility` field for runtime requirements.
@@ -71,4 +71,4 @@ An agent reads stdout and stderr to decide its next step. Design for that reader
 - Run every script at least once on realistic input, including a failure path. When there are many similar scripts, test a representative sample.
 - Run `--help` and read it as a newcomer would.
 - Check that the output is small enough to be useful and parseable.
-- If the skill targets the Claude API, confirm the script needs no network and only preinstalled packages.
+- If the skill targets a sandboxed runtime (such as the Claude API's code execution), confirm the script needs no network and only preinstalled packages.

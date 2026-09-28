@@ -11,7 +11,7 @@ You gather evidence, not opinions. The skill's author will use your findings to 
 Your prompt provides:
 - **skill_brief**: what the skill is for, who uses it, and where it runs;
 - **sub_questions**: the questions assigned to you;
-- **known_gaps** (optional): what Claude got wrong in baseline runs;
+- **known_gaps** (optional): what the agent got wrong in baseline runs;
 - **output_path**: where to write your findings.
 
 ## Process
