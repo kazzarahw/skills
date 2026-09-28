@@ -1,0 +1,29 @@
+This skill incorporates material from MIT-licensed skills, used under the MIT License with attribution below. The skill's own original content is Apache-2.0 (see repository LICENSE).
+
+- mattpocock/skills — `research` skill (primary-source investigation, per-claim citation, repo-file output).
+  Copyright (c) 2026 Matt Pocock. MIT License. Source: https://github.com/mattpocock/skills
+
+- affaan-m/ecc — `deep-research` skill (sub-question planning, search strategy, full-read rule, report template, quality gates, untrusted-source safety, parallel research).
+  Copyright (c) 2026 Affaan Mustafa. MIT License. Source: https://github.com/affaan-m/ecc
+
+Ideas (re-expressed, no text copied) from rysweet/amplihack `researching-topics` (source tiers, strategy router, explainer structure).
+
+MIT License text (applies to the borrowed portions above):
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
