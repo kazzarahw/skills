@@ -1,0 +1,100 @@
+{
+  "skill_name": "osint",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to investigate a person named John Smith who claims to be a software engineer at Google. Can you help me verify this?",
+      "expected_output": "The agent should recognize this as a people investigation, bind the name to a second selector (employer), and outline a verification plan including professional networks, published output, and corporate records.",
+      "expectations": [
+        "The agent identifies this as a people investigation",
+        "The agent binds the name to a second selector (employer Google)",
+        "The agent outlines a verification plan with multiple sources",
+        "The agent mentions corroboration standards"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you check if the domain example.com is owned by the same company as example.org?",
+      "expected_output": "The agent should recognize this as a domain investigation, plan passive reconnaissance including WHOIS, DNS, and certificate analysis, and look for shared infrastructure indicators.",
+      "expectations": [
+        "The agent identifies this as a domain investigation",
+        "The agent plans passive reconnaissance (WHOIS, DNS, certificates)",
+        "The agent looks for shared infrastructure indicators",
+        "The agent mentions attribution grading"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I found this email address: john.doe@example.com. Can you tell me who owns it?",
+      "expected_output": "The agent should recognize this as an email investigation, plan validation and Gravatar lookup, check breach exposure, and search for the address in public sources.",
+      "expectations": [
+        "The agent identifies this as an email investigation",
+        "The agent plans email validation and Gravatar lookup",
+        "The agent checks breach exposure",
+        "The agent searches for the address in public sources"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Is this photo real? I found it on social media claiming to be from a protest in Kyiv.",
+      "expected_output": "The agent should recognize this as a media investigation, plan metadata extraction, reverse image search for provenance, visual geolocation, and authenticity checks.",
+      "expectations": [
+        "The agent identifies this as a media investigation",
+        "The agent plans metadata extraction",
+        "The agent plans reverse image search for provenance",
+        "The agent plans visual geolocation",
+        "The agent plans authenticity checks"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I need to do due diligence on a company called Acme Corp before we sign a contract with them.",
+      "expected_output": "The agent should recognize this as a company investigation, plan entity resolution, ownership mapping, officer profiling, digital estate enumeration, and sanctions screening.",
+      "expectations": [
+        "The agent identifies this as a company investigation",
+        "The agent plans entity resolution",
+        "The agent plans ownership mapping",
+        "The agent plans officer profiling",
+        "The agent plans digital estate enumeration",
+        "The agent plans sanctions screening"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Can you find all social media accounts for the username 'johndoe123'?",
+      "expected_output": "The agent should recognize this as a username investigation, plan enumeration with sherlock/maigret, generate variants, and confirm accounts through correlation.",
+      "expectations": [
+        "The agent identifies this as a username investigation",
+        "The agent plans enumeration with sherlock or maigret",
+        "The agent generates username variants",
+        "The agent confirms accounts through correlation"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "I need to trace a Bitcoin payment that was made to address bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh. Where did the money go?",
+      "expected_output": "The agent should recognize this as a cryptocurrency investigation, plan block explorer analysis, clustering, and off-ramp identification.",
+      "expectations": [
+        "The agent identifies this as a cryptocurrency investigation",
+        "The agent plans block explorer analysis",
+        "The agent plans clustering analysis",
+        "The agent plans off-ramp identification"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Write an intelligence report about the findings from investigating John Smith, including his employment history, social media presence, and any negative findings.",
+      "expected_output": "The agent should produce a structured intelligence report with BLUF, key judgements, findings with observation/inference/assessment separation, negative findings, gaps, methodology, and sources.",
+      "expectations": [
+        "The agent produces a structured intelligence report",
+        "The report includes BLUF",
+        "The report includes key judgements with estimative language",
+        "The report separates observation from inference from assessment",
+        "The report includes negative findings",
+        "The report includes gaps and limitations",
+        "The report includes methodology",
+        "The report includes sources with access dates"
+      ]
+    }
+  ]
+}
