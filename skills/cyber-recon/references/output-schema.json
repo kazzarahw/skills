@@ -1,0 +1,324 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cyber-skills.local/schemas/recon-output.json",
+  "title": "Reconnaissance Output Schema",
+  "description": "Structured output schema for reconnaissance pipeline results. Defines the format for hosts, findings, and methodology data collected during authorized penetration testing engagements.",
+  "type": "object",
+  "required": ["engagement_id", "target", "timestamp", "scope_verified", "hosts", "findings", "methodology"],
+  "properties": {
+    "engagement_id": {
+      "type": "string",
+      "description": "Unique identifier for this engagement",
+      "pattern": "^RECON-[0-9]{8}-[A-Z0-9]{6}$",
+      "examples": ["RECON-20240115-A3F9B2"]
+    },
+    "target": {
+      "type": "string",
+ "description": "Primary target of the reconnaissance (domain, IP, or CIDR range)",
+      "examples": ["example.com", "192.168.1.0/24", "api.example.com"]
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "ISO 8601 timestamp of when the recon was performed",
+      "format": "date-time",
+      "examples": ["2024-01-15T14:30:00Z"]
+    },
+    "scope_verified": {
+      "type": "boolean",
+      "description": "Whether the target was verified against the authorized scope before scanning",
+      "const": true
+    },
+    "hosts": {
+      "type": "array",
+      "description": "List of discovered hosts with their associated data",
+      "items": {
+        "type": "object",
+        "required": ["ip", "hostname", "ports", "services", "tech_stack"],
+        "properties": {
+          "ip": {
+            "type": "string",
+            "description": "IP address of the host",
+            "pattern": "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$"
+          },
+          "hostname": {
+            "type": "string",
+            "description": "Primary hostname associated with this IP",
+            "default": ""
+          },
+          "hostnames": {
+            "type": "array",
+            "description": "All known hostnames for this IP",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "ports": {
+            "type": "array",
+            "description": "Open ports discovered on this host",
+            "items": {
+              "type": "object",
+              "required": ["port", "protocol", "service"],
+              "properties": {
+                "port": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 65535
+                },
+                "protocol": {
+                  "type": "string",
+                  "enum": ["tcp", "udp", "sctp"],
+                  "default": "tcp"
+                },
+                "service": {
+                  "type": "string",
+                  "description": "Service name detected on this port"
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Version of the service (if detected)",
+                  "default": ""
+                },
+                "product": {
+                  "type": "string",
+                  "description": "Product name (e.g., Apache, nginx, OpenSSH)",
+                  "default": ""
+                },
+                "banner": {
+                  "type": "string",
+                  "description": "Raw service banner if captured",
+                  "default": ""
+                }
+              }
+            }
+          },
+          "services": {
+            "type": "array",
+            "description": "List of service names running on this host",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "tech_stack": {
+            "type": "array",
+            "description": "Detected technologies and frameworks",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "os_guess": {
+            "type": "string",
+            "description": "Operating system guess from nmap -O",
+            "default": ""
+          },
+          "first_seen": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this host was first discovered"
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "description": "List of findings discovered during reconnaissance",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "severity", "host", "port", "service", "cve", "cvss", "evidence", "verification"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique finding identifier",
+            "pattern": "^VULN-[0-9]{4,}$"
+          },
+          "title": {
+            "type": "string",
+            "description": "Human-readable title of the finding"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the finding",
+            "default": ""
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity level of the finding",
+            "enum": ["info", "low", "medium", "high", "critical"]
+          },
+          "host": {
+            "type": "string",
+            "description": "Host where the finding was discovered"
+          },
+          "port": {
+            "type": ["integer", "string"],
+            "description": "Port number (integer) or service name (string)",
+            "minimum": 1,
+          "maximum": 65535
+          },
+          "service": {
+            "type": "string",
+            "description": "Service associated with the finding"
+          },
+          "cve": {
+            "type": "string",
+            "description": "CVE identifier if applicable",
+            "pattern": "^(CVE-[0-9]{4}-[0-9]+)?$",
+            "default": ""
+          },
+          "cvss": {
+            "type": ["number", "string"],
+            "description": "CVSS score (0.0-10.0) or vector string",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "cvss_vector": {
+            "type": "string",
+            "description": "CVSS vector string",
+            "default": ""
+          },
+          "evidence": {
+            "type": "string",
+            "description": "Raw evidence supporting the finding (command output, response data)"
+          },
+          "verification": {
+            "type": "string",
+            "description": "Verification status of the finding",
+            "enum": ["pending", "confirmed", "false_positive", "not_reproducible"],
+            "default": "pending"
+          },
+          "remediation": {
+            "type": "string",
+            "description": "Suggested remediation steps",
+            "default": ""
+          },
+          "references": {
+            "type": "array",
+            "description": "External references (links, advisories)",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "discovered_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this finding was discovered"
+          },
+          "discovered_by": {
+            "type": "string",
+            "description": "Tool that discovered this finding",
+            "examples": ["nuclei", "nikto", "nmap", "masscan", "manual"]
+          }
+        }
+      }
+    },
+    "methodology": {
+      "type": "object",
+      "description": "Methodology and tools used during the engagement",
+      "required": ["tools_used", "commands_executed", "time_window"],
+      "properties": {
+        "tools_used": {
+          "type": "array",
+          "description": "List of tools used during reconnaissance",
+          "items": {
+            "type": "object",
+            "required": ["name", "version", "purpose"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string",
+                "default": ""
+              },
+              "purpose": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "commands_executed": {
+          "type": "array",
+          "description": "All commands executed during the engagement for reproducibility",
+          "items": {
+            "type": "object",
+            "required": ["command", "phase", "timestamp"],
+            "properties": {
+              "command": {
+                "type": "string"
+              },
+              "phase": {
+                "type": "string",
+                "enum": ["passive", "active", "vuln", "compile"]
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "exit_code": {
+                "type": "integer",
+                "default": 0
+              }
+            }
+          }
+        },
+        "time_window": {
+          "type": "object",
+          "description": "Time window of the engagement",
+          "required": ["start", "end"],
+          "properties": {
+            "start": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "end": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "duration_seconds": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "rate_limits": {
+          "type": "object",
+          "description": "Rate limiting configuration used",
+          "properties": {
+            "packets_per_second": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "requests_per_second": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "wordlists_used": {
+          "type": "array",
+          "description": "Wordlists used for enumeration",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the engagement",
+      "properties": {
+        "operator": {
+          "type": "string",
+          "description": "Name/ID of the operator who ran the scan"
+        },
+        "client": {
+          "type": "string",
+          "description": "Client organization name"
+        },
+        "engagement_type": {
+          "type": "string",
+          "enum": ["black_box", "gray_box", "white_box"],
+          "default": "black_box"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes or observations"
+        }
+      }
+    }
+  }
+}

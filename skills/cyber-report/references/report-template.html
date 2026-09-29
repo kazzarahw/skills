@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{report_title}} - Penetration Test Report</title>
+    <style>
+        /* ==================================================================
+           CSS RESET & BASE STYLES
+           ================================================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --color-critical: #dc2626;
+            --color-high: #ea580c;
+            --color-medium: #d97706;
+            --color-low: #65a30d;
+            --color-info: #2563eb;
+            --color-bg: #f8fafc;
+            --color-surface: #ffffff;
+            --color-border: #e2e8f0;
+            --color-text: #1e293b;
+            --color-text-muted: #64748b;
+            --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* ==================================================================
+           CLASSIFICATION BANNER
+           ================================================================== */
+        .classification-banner {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #f8fafc;
+            padding: 12px 24px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid var(--color-critical);
+        }
+
+        .classification-banner .classification-level {
+            color: #fbbf24;
+        }
+
+        /* ==================================================================
+           LAYOUT
+           ================================================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* ==================================================================
+           HEADER
+           ================================================================== */
+        .report-header {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--color-text);
+        }
+
+        .report-header .subtitle {
+            font-size: 16px;
+            color: var(--color-text-muted);
+            margin-bottom: 24px;
+        }
+
+        .report-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            padding-top: 24px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-muted);
+            margin-bottom: 4px;
+        }
+
+        .meta-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        /* ==================================================================
+           SEVERITY BADGES
+           ================================================================== */
+        .severity {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .severity-critical {
+            background-color: #fef2f2;
+            color: var(--color-critical);
+            border: 1px solid #fecaca;
+        }
+
+        .severity-high {
+            background-color: #fff7ed;
+            color: var(--color-high);
+            border: 1px solid #fed7aa;
+        }
+
+        .severity-medium {
+            background-color: #fffbeb;
+            color: var(--color-medium);
+            border: 1px solid #fde68a;
+        }
+
+        .severity-low {
+            background-color: #f7fee7;
+            color: var(--color-low);
+            border: 1px solid #d9f99d;
+        }
+
+        .severity-info {
+            background-color: #eff6ff;
+            color: var(--color-info);
+            border: 1px solid #bfdbfe;
+        }
+
+        /* ==================================================================
+           SECTION STYLES
+           ================================================================== */
+        .section {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            background: linear-gradient(to right, #f1f5f9, #e2e8f0);
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-header h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: var(--color-info);
+            border-radius: 2px;
+        }
+
+        .section-body {
+            padding: 24px;
+        }
+
+        /* ==================================================================
+           EXECUTIVE SUMMARY
+           ================================================================== */
+        .executive-summary {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: #f8fafc;
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .executive-summary h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #fbbf24;
+        }
+
+        .executive-summary p {
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+            color: #e2e8f0;
+        }
+
+        .executive-summary .key-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #475569;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        /* ==================================================================
+           FINDINGS SUMMARY TABLE
+           ================================================================== */
+        .findings-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .findings-table thead {
+            background: #f1f5f9;
+        }
+
+        .findings-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-muted);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .findings-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-border);
+            vertical-align: top;
+        }
+
+        .findings-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .findings-table .finding-id {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--color-info);
+        }
+
+        .findings-table .finding-title {
+            font-weight: 500;
+            max-width: 300px;
+        }
+
+        /* ==================================================================
+           DETAILED FINDINGS
+           ================================================================== */
+        .finding-detail {
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .finding-detail.critical {
+            border-left: 4px solid var(--color-critical);
+        }
+
+        .finding-detail.high {
+            border-left: 4px solid var(--color-high);
+        }
+
+        .finding-detail.medium {
+            border-left: 4px solid var(--color-medium);
+        }
+
+        .finding-detail.low {
+            border-left: 4px solid var(--color-low);
+        }
+
+        .finding-detail.info {
+            border-left: 4px solid var(--color-info);
+        }
+
+        .finding-header {
+            background: #f8fafc;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .finding-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .finding-body {
+            padding: 20px;
+        }
+
+        .finding-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .finding-meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .finding-meta-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            margin-bottom: 2px;
+        }
+
+        .finding-meta-value {
+            font-size: 13px;
+            font-family: var(--font-mono);
+            color: var(--color-text);
+        }
+
+        .finding-description {
+            margin-bottom: 16px;
+        }
+
+        .finding-description h4 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .finding-description p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--color-text);
+        }
+
+        .finding-evidence {
+            background: #f8fafc;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .finding-evidence h4 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .finding-evidence pre {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--color-text);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+        }
+
+        .finding-remediation {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .finding-remediation h4 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #166534;
+            margin-bottom: 8px;
+        }
+
+        .finding-remediation p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #14532d;
+        }
+
+        /* ==================================================================
+           REMEDIATION ROADMAP
+           ================================================================== */
+        .roadmap {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .roadmap::before {
+            content: '';
+            position: absolute;
+            left: 11px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--color-border);
+        }
+
+        .roadmap-item {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--color-surface);
+        }
+
+        .roadmap-item.critical::before {
+            background: var(--color-critical);
+        }
+
+        .roadmap-item.high::before {
+            background: var(--color-high);
+        }
+
+        .roadmap-item.medium::before {
+            background: var(--color-medium);
+        }
+
+        .roadmap-item.low::before {
+            background: var(--color-low);
+        }
+
+        .roadmap-item.info::before {
+            background: var(--color-info);
+        }
+
+        .roadmap-content {
+            background: #f8fafc;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .roadmap-phase {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-text-muted);
+            margin-bottom: 4px;
+        }
+
+        .roadmap-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .roadmap-description {
+            font-size: 13px;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        /* ==================================================================
+           CHARTS & VISUALIZATIONS
+           ================================================================== */
+        .chart-container {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .severity-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .severity-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .severity-bar-label {
+            width: 80px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .severity-bar-track {
+            flex: 1;
+            height: 24px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .severity-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .severity-bar-fill.critical { background: var(--color-critical); }
+        .severity-bar-fill.high { background: var(--color-high); }
+        .severity-bar-fill.medium { background: var(--color-medium); }
+        .severity-bar-fill.low { background: var(--color-low); }
+        .severity-bar-fill.info { background: var(--color-info); }
+
+        .severity-bar-count {
+            width: 40px;
+            text-align: right;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* ==================================================================
+           FOOTER
+           ================================================================== */
+        .report-footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--color-text-muted);
+            font-size: 12px;
+            border-top: 1px solid var(--color-border);
+            margin-top: 24px;
+        }
+
+        .report-footer p {
+            margin-bottom: 4px;
+        }
+
+        /* ==================================================================
+           PRINT STYLES
+           ================================================================== */
+        @media print {
+            .classification-banner {
+                position: relative;
+                background: #000;
+                color: #fff;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .section {
+                break-inside: avoid;
+                box-shadow: none;
+            }
+
+            .finding-detail {
+                break-inside: avoid;
+            }
+
+            body {
+                background: #fff;
+            }
+        }
+
+        /* ==================================================================
+           RESPONSIVE
+           ================================================================== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .report-header {
+                padding: 20px;
+            }
+
+            .report-header h1 {
+                font-size: 22px;
+            }
+
+            .findings-table {
+                font-size: 12px;
+            }
+
+            .findings-table th,
+            .findings-table td {
+                padding: 8px 12px;
+            }
+
+            .finding-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Classification Banner -->
+    <div class="classification-banner">
+        <span class="classification-level">{{classification}}</span>
+        &mdash; Authorized Distribution Only &mdash;
+        <span class="classification-level">{{classification}}</span>
+    </div>
+
+    <div class="container">
+
+        <!-- Report Header -->
+        <header class="report-header">
+            <h1>{{report_title}}</h1>
+            <p class="subtitle">{{report_subtitle}}</p>
+            
+            <div class="report-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Client</span>
+                    <span class="meta-value">{{client_name}}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Engagement</span>
+                    <span class="meta-value">{{engagement_id}}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Report Date</span>
+                    <span class="meta-value">{{report_date}}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Tester</span>
+                    <span class="meta-value">{{tester_name}}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Version</span>
+                    <span class="meta-value">{{report_version}}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Classification</span>
+                    <span class="meta-value">{{classification}}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Executive Summary -->
+        <section class="executive-summary">
+            <h2>Executive Summary</h2>
+            <p>{{executive_summary}}</p>
+            <p>{{executive_summary_details}}</p>
+            
+            <div class="key-metrics">
+                <div class="metric-card">
+                    <div class="metric-value">{{total_findings}}</div>
+                    <div class="metric-label">Total Findings</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{critical_count}}</div>
+                    <div class="metric-label">Critical</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{high_count}}</div>
+                    <div class="metric-label">High</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{medium_count}}</div>
+                    <div class="metric-label">Medium</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{low_count}}</div>
+                    <div class="metric-label">Low</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{info_count}}</div>
+                    <div class="metric-label">Info</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Severity Distribution Chart -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Findings by Severity</h2>
+            </div>
+            <div class="section-body">
+                <div class="chart-container">
+                    <div class="severity-chart">
+                        <div class="severity-bar">
+                            <span class="severity-bar-label">Critical</span>
+                            <div class="severity-bar-track">
+                                <div class="severity-bar-fill critical" style="width: {{critical_percentage}}%"></div>
+                            </div>
+                            <span class="severity-bar-count">{{critical_count}}</span>
+                        </div>
+                        <div class="severity-bar">
+                            <span class="severity-bar-label">High</span>
+                            <div class="severity-bar-track">
+                                <div class="severity-bar-fill high" style="width: {{high_percentage}}%"></div>
+                            </div>
+                            <span class="severity-bar-count">{{high_count}}</span>
+                        </div>
+                        <div class="severity-bar">
+                            <span class="severity-bar-label">Medium</span>
+                            <div class="severity-bar-track">
+                                <div class="severity-bar-fill medium" style="width: {{medium_percentage}}%"></div>
+                            </div>
+                            <span class="severity-bar-count">{{medium_count}}</span>
+                        </div>
+                        <div class="severity-bar">
+                            <span class="severity-bar-label">Low</span>
+                            <div class="severity-bar-track">
+                                <div class="severity-bar-fill low" style="width: {{low_percentage}}%"></div>
+                            </div>
+                            <span class="severity-bar-count">{{low_count}}</span>
+                        </div>
+                        <div class="severity-bar">
+                            <span class="severity-bar-label">Info</span>
+                            <div class="severity-bar-track">
+                                <div class="severity-bar-fill info" style="width: {{info_percentage}}%"></div>
+                            </div>
+                            <span class="severity-bar-count">{{info_count}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Findings Summary Table -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Findings Summary</h2>
+            </div>
+            <div class="section-body">
+                <table class="findings-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Severity</th>
+                            <th>Category</th>
+                            <th>Affected Host</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{findings_table}}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Detailed Findings -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Detailed Findings</h2>
+            </div>
+            <div class="section-body">
+                {{detailed_findings}}
+            </div>
+        </section>
+
+        <!-- Remediation Roadmap -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Remediation Roadmap</h2>
+            </div>
+            <div class="section-body">
+                <div class="roadmap">
+                    {{remediation_roadmap}}
+                </div>
+            </div>
+        </section>
+
+        <!-- Methodology -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Methodology</h2>
+            </div>
+            <div class="section-body">
+                <p>{{methodology_description}}</p>
+                <br>
+                <h4 style="font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 8px;">Tools Used</h4>
+                <p>{{tools_used}}</p>
+                <br>
+                <h4 style="font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 8px;">Testing Period</h4>
+                <p>{{testing_period}}</p>
+            </div>
+        </section>
+
+        <!-- Report Footer -->
+        <footer class="report-footer">
+            <p><strong>{{company_name}}</strong></p>
+            <p>{{company_address}}</p>
+            <p>Report generated on {{report_date}} | Version {{report_version}}</p>
+            <p style="margin-top: 12px; font-style: italic;">This report is confidential and intended solely for the authorized recipient.</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
