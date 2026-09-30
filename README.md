@@ -5,6 +5,7 @@ Custom [Agent Skills](https://agentskills.io), written to the open spec so they 
 | Skill | What it does |
 |---|---|
 | [deep-research](skills/deep-research/) | Investigates topics in depth against primary sources and delivers cited reports with confidence levels and gaps. |
+| [soc-dashboard](skills/soc-dashboard/) | Builds an interactive, single-file HTML security dashboard from real logs and alerts (Suricata, Zeek, syslog, Windows events, CEF, JSON/CSV): minimal single-ink design, cross-filtering, rule-based signals, headless verification. |
 | [learn-skill](skills/learn-skill/) | Creates, improves, merges, and tests skills: finds existing skills before building, vets third-party skills, cherry-picks rules from them, grounds new skills in research, and benchmarks them against no skill. |
 
 ## Install

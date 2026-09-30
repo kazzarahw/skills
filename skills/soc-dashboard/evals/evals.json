@@ -1,0 +1,96 @@
+{
+  "skill_name": "soc-dashboard",
+  "notes": "Fixtures are synthetic but format-true; regenerate with soc-dashboard-workspace/fixtures/make_fixtures.py (base) and `make_fixtures.py extra`. Assertions are checked mechanically by soc-dashboard-workspace/grade.py. Baseline = no soc-dashboard skill, run outside the repo so the project skills symlink cannot expose it.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "suricata-alerts",
+      "prompt": "I have a Suricata eve.json export from our sensor, covering last week, in this folder. Build me an interactive SOC-analysis style dashboard from it as a single HTML file I can open in my browser. I want it minimal and clean, not flashy. Put the result in dashboard.html here.",
+      "expected_output": "Alerts-centred dashboard (severity as hero), 36h 60s beacon 10.20.2.77 -> 103.75.201.9 and the 185.220.101.47 scan surfaced, hostile user-agent shown inert.",
+      "files": [
+        "fixtures/eve.json"
+      ],
+      "expectations": [
+        "dashboard.html exists and is self-contained (no external src/href/url())",
+        "Renders in headless Chromium with no console errors and real content",
+        "A CSP meta tag blocks inline-script injection (script-src without 'unsafe-inline'/'unsafe-eval')",
+        "Page script uses no HTML-string sinks (innerHTML/outerHTML/insertAdjacentHTML/document.write)",
+        "Sharp corners throughout (no non-zero border-radius)",
+        "Restrained palette: chromatic colours in the page fall in at most 2 hue families",
+        "Labels are set as tracked uppercase (text-transform:uppercase plus letter-spacing)",
+        "No horizontal page overflow at phone width (390px)",
+        "Hostile strings in the data (<img onerror>, <script>alert) render as inert text",
+        "Surfaces the planted finding (10.20.2.77 + 103.75.201.9) in the dashboard or the final message",
+        "Surfaces the planted finding (185.220.101.47) in the dashboard or the final message",
+        "Headline figure 17,087 (alerts) is correct and visible",
+        "Headline figure 2,578 (severity-1 = high alerts) is correct and visible"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ssh-auth",
+      "prompt": "This is auth.log from our VPN gateway for the past week. Make me an interactive dashboard so I can see what is going on in it - single HTML file I can open locally, clean and minimal. Save it as dashboard.html in this folder.",
+      "expected_output": "Auth-centred dashboard (outcome as hero); 400 failures then a deploy login from 61.177.172.14 then sudo surfaced as one lead; year/zone assumption disclosed.",
+      "files": [
+        "fixtures/auth.log"
+      ],
+      "expectations": [
+        "dashboard.html exists and is self-contained (no external src/href/url())",
+        "Renders in headless Chromium with no console errors and real content",
+        "A CSP meta tag blocks inline-script injection (script-src without 'unsafe-inline'/'unsafe-eval')",
+        "Page script uses no HTML-string sinks (innerHTML/outerHTML/insertAdjacentHTML/document.write)",
+        "Sharp corners throughout (no non-zero border-radius)",
+        "Restrained palette: chromatic colours in the page fall in at most 2 hue families",
+        "Labels are set as tracked uppercase (text-transform:uppercase plus letter-spacing)",
+        "No horizontal page overflow at phone width (390px)",
+        "Hostile strings in the data (<img onerror>, <script>alert) render as inert text",
+        "Surfaces the planted finding (61.177.172.14 + deploy) in the dashboard or the final message",
+        "Headline figure 2,900 (failed logins) is correct and visible"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "zeek-conn",
+      "prompt": "Here's a Zeek conn.log from the perimeter tap, three days of it. I want to explore what this network was doing: one HTML file I can open locally, interactive, clean and minimal. Save it as dashboard.html in this folder.",
+      "expected_output": "Flow-centred dashboard (bytes as hero, no severity panels); 2.8 GB transfer to 185.199.109.15 and the 45.9.148.22 port sweep surfaced.",
+      "files": [
+        "fixtures/conn.log"
+      ],
+      "expectations": [
+        "dashboard.html exists and is self-contained (no external src/href/url())",
+        "Renders in headless Chromium with no console errors and real content",
+        "A CSP meta tag blocks inline-script injection (script-src without 'unsafe-inline'/'unsafe-eval')",
+        "Page script uses no HTML-string sinks (innerHTML/outerHTML/insertAdjacentHTML/document.write)",
+        "Sharp corners throughout (no non-zero border-radius)",
+        "Restrained palette: chromatic colours in the page fall in at most 2 hue families",
+        "Labels are set as tracked uppercase (text-transform:uppercase plus letter-spacing)",
+        "No horizontal page overflow at phone width (390px)",
+        "Surfaces the planted finding (185.199.109.15) in the dashboard or the final message",
+        "Surfaces the planted finding (45.9.148.22) in the dashboard or the final message",
+        "Headline figure 43,320 (connections) is correct and visible"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "windows-events",
+      "prompt": "winevents.json is a Windows Security event export (one JSON object per line) from our domain servers. Build me an interactive dashboard to dig through the logons and spot anything off. Single self-contained HTML, minimal and clean, saved as dashboard.html here.",
+      "expected_output": "Auth-centred dashboard; spray from 91.240.118.172, helpdesk RDP success, support_tmp created and added to Administrators, audit log cleared surfaced as a chain, without false positives on routine logons.",
+      "files": [
+        "fixtures/winevents.json"
+      ],
+      "expectations": [
+        "dashboard.html exists and is self-contained (no external src/href/url())",
+        "Renders in headless Chromium with no console errors and real content",
+        "A CSP meta tag blocks inline-script injection (script-src without 'unsafe-inline'/'unsafe-eval')",
+        "Page script uses no HTML-string sinks (innerHTML/outerHTML/insertAdjacentHTML/document.write)",
+        "Sharp corners throughout (no non-zero border-radius)",
+        "Restrained palette: chromatic colours in the page fall in at most 2 hue families",
+        "Labels are set as tracked uppercase (text-transform:uppercase plus letter-spacing)",
+        "No horizontal page overflow at phone width (390px)",
+        "Surfaces the planted finding (91.240.118.172 + helpdesk) in the dashboard or the final message",
+        "Surfaces the planted finding (support_tmp + 1102) in the dashboard or the final message",
+        "Headline figure 1,322 (failed logons) is correct and visible"
+      ]
+    }
+  ]
+}
