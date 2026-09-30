@@ -249,7 +249,6 @@ cast balance <address> --rpc-url $RPC_URL
 - `VERIFIED` → load `report` with the evidence pack.
 - `UNVERIFIABLE` after re-test → load `coach` for a new oracle angle, or mark inconclusive — never upgrade it yourself.
 - `BLOCKED` → stop and report the blocker; record it in `wiki`.
-- Adversarial review needs fresh eyes (same-model critics share blind spots) → delegate Stage 2 to the `spark-reviewer` subagent with evidence only, no generator reasoning.
 
 ## Mid-Work Checkpoints
 
