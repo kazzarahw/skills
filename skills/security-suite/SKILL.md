@@ -150,13 +150,13 @@ Status: [Active/Complete]
 | `security-forensics` | Investigating incidents, tracing funds | suite, exploit |
 | `security-report` | Generating deliverables, documenting findings | suite, all skills |
 | `security-coach` | Course correction, strategy guidance | suite, all skills |
-| `security-wiki` | Knowledge persistence, cross-engagement learning | suite, all skills |
+| `wiki` | Knowledge persistence, cross-engagement learning | suite, all skills |
 
 ## Handoffs
 
 - You are the entry point. A full engagement starts here — workers never self-orchestrate.
 - At each phase boundary: verify exit criteria, summarize evidence, then load the next skill with the skill tool (recon → audit → exploit → verify → report; forensics branch for incidents).
-- Intel gaps → `deep-research`. Stall anywhere → `security-coach`. Phase ends → persist state to `security-wiki`.
+- Intel gaps → `deep-research`. Stall anywhere → `security-coach`. Phase ends → persist state to `wiki`.
 
 ## Shared Conventions
 

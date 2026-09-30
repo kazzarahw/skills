@@ -242,7 +242,7 @@ Verify remediations and deliver the final report.
 | `security-verify` | Verify findings before reporting |
 | `security-report` | Generate audit report |
 | `security-coach` | Course correction when audit stalls |
-| `security-wiki` | Knowledge persistence |
+| `wiki` | Knowledge persistence |
 
 ## Handoffs
 
@@ -250,7 +250,7 @@ Verify remediations and deliver the final report.
 - Finding with a concrete exploit path → load `security-exploit` to prove it (testnets/forks only).
 - Finding ready to report → load `security-verify`; never report unverified.
 - Procedural gap (e.g. optimal Foundry/slither usage) → build a helper skill with `learn-skill` instead of improvising.
-- Stuck → `security-coach`. Phase done → persist to `security-wiki`.
+- Stuck → `security-coach`. Phase done → persist to `wiki`.
 
 ## Mid-Work Checkpoints
 

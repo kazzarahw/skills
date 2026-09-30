@@ -202,12 +202,12 @@ Each remediation item must:
 | `security-forensics` | Investigation findings |
 | `security-verify` | Verification status |
 | `security-coach` | Course correction |
-| `security-wiki` | Knowledge persistence |
+| `wiki` | Knowledge persistence |
 
 ## Handoffs
 
 - Any finding lacks a `VERIFIED` verdict → stop and load `security-verify` first; this skill never verifies.
-- Missing source material → pull from `security-wiki` before asking the user.
+- Missing source material → pull from `wiki` before asking the user.
 
 ## Mid-Work Checkpoints
 

@@ -242,13 +242,13 @@ cast balance <address> --rpc-url $RPC_URL
 | `security-forensics` | Verify investigation findings |
 | `security-report` | Verification status in reports |
 | `security-coach` | Course correction |
-| `security-wiki` | Knowledge persistence |
+| `wiki` | Knowledge persistence |
 
 ## Handoffs
 
 - `VERIFIED` → load `security-report` with the evidence pack.
 - `UNVERIFIABLE` after re-test → load `security-coach` for a new oracle angle, or mark inconclusive — never upgrade it yourself.
-- `BLOCKED` → stop and report the blocker; record it in `security-wiki`.
+- `BLOCKED` → stop and report the blocker; record it in `wiki`.
 
 ## Mid-Work Checkpoints
 

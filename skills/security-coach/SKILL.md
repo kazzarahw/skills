@@ -112,14 +112,14 @@ The coach is available to all skills:
 | `security-forensics` | When investigation reaches dead end |
 | `security-report` | When report structure is unclear |
 | `security-verify` | When verification approach is flawed |
-| `security-wiki` | When knowledge organization is inefficient |
+| `wiki` | When knowledge organization is inefficient |
 
 ## Handoffs
 
 Name the redirect target explicitly, never hand-wave:
 - Needs facts about a target → `deep-research`.
 - Needs recon, audit, exploit, verify, or report work done → that skill.
-- Lesson worth keeping → `security-wiki`.
+- Lesson worth keeping → `wiki`.
 
 ## Mid-Work Checkpoints
 

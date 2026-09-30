@@ -1,5 +1,5 @@
 ---
-name: security-wiki
+name: wiki
 description: >-
   Persistent knowledge base with provenance, for engagements and general research alike. Use when recording anything worth keeping — findings, decisions, techniques, patterns — or when prior knowledge applies. Security-report draws source material from it.
 ---

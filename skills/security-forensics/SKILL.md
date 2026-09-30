@@ -186,14 +186,14 @@ Synthesize findings into actionable intelligence.
 | `security-verify` | Verification of findings |
 | `security-report` | Generating investigation report |
 | `security-coach` | Course correction when investigation stalls |
-| `security-wiki` | Knowledge persistence |
+| `wiki` | Knowledge persistence |
 
 ## Handoffs
 
 - Root cause points at a vulnerability → load `security-audit` (scoped) or `security-exploit` (fork-only proof).
 - Conclusions need confirmation → load `security-verify`.
 - Report due → load `security-report`.
-- Stuck → `security-coach`. Evidence and patterns → `security-wiki`.
+- Stuck → `security-coach`. Evidence and patterns → `wiki`.
 
 ## Mid-Work Checkpoints
 

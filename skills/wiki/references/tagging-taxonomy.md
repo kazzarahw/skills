@@ -75,6 +75,7 @@ Tags are organized into the following categories:
 | `web2` | Web application, network, infrastructure findings | Default for traditional security testing |
 | `web3` | Blockchain, smart contract, DeFi findings | Default for blockchain security testing |
 | `cross-domain` | Findings spanning both web2 and web3 | When a finding impacts both domains |
+| `general` | Non-security knowledge of any kind | Default for everything outside engagements |
 
 ### Domain Tag Rules
 
@@ -320,7 +321,8 @@ tags: [client-acme, eng-2026-002, 2026-08]
 
 | Page Type | Required Tags |
 |-----------|---------------|
-| Any finding | `domain` + `severity` + `status` |
+| Any security finding | `domain` + `severity` + `status` |
+| General page | `general` + `status` (severity/vuln tags do not apply) |
 | Web2 finding | `web2` + `owasp-top10` or `cve` |
 | Web3 finding | `web3` + `swc-registry` or `cve` |
 | Cross-domain | `cross-domain` + both domain tags |
@@ -352,6 +354,7 @@ tags: [client-acme, eng-2026-002, 2026-08]
 - Is this a web2 finding? → `web2`
 - Is this a web3 finding? → `web3`
 - Does it span both? → `cross-domain`
+- Neither (general knowledge)? → `general`, then skip to Step 6 (status)
 
 ### Step 2: Identify Technique
 - How was this finding produced? → `recon`, `audit`, `exploit`, etc.

@@ -58,7 +58,7 @@ Use `assets/report-template.md` exactly for deep reports (header, executive summ
 
 ## Consumers
 
-Engagement skills that should load this skill: `security-recon` (target, vendor, and actor intel), `security-audit` (protocol and codebase background), `security-wiki` (cited source material). This skill researches; it never audits, exploits, or verifies — hand findings back, don't act on them.
+Engagement skills that should load this skill: `security-recon` (target, vendor, and actor intel), `security-audit` (protocol and codebase background), `wiki` (cited source material). This skill researches; it never audits, exploits, or verifies — hand findings back, don't act on them.
 
 ## Mid-Work Checkpoints
 

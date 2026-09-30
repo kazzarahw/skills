@@ -145,7 +145,7 @@ Identify initial risk indicators for prioritization.
 | `security-exploit` | Target selection for exploitation |
 | `security-verify` | Verification of recon findings |
 | `security-coach` | Course correction when recon stalls |
-| `security-wiki` | Knowledge persistence across engagements |
+| `wiki` | Knowledge persistence across engagements |
 
 ## Handoffs
 
@@ -154,7 +154,7 @@ Act on these transitions immediately — load the named skill with the skill too
 - Target intel needs cited depth (vendor, protocol, actor) → load `deep-research`.
 - A finding needs confirmation before it leaves recon → load `security-verify`.
 - Stuck, looping, or off-track → load `security-coach`.
-- Phase done → record the map and indicators in `security-wiki`.
+- Phase done → record the map and indicators in `wiki`.
 
 ## Mid-Work Checkpoints
 
