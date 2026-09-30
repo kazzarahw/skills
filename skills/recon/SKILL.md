@@ -51,7 +51,7 @@ Gather intelligence without touching the target.
 
 ### Phase 2: Active Reconnaissance
 
-Direct interaction with in-scope targets.
+Run `scripts/recon-pipeline.sh` for the standard sweep first — hand-rolled loops come only after the pipeline's output. Direct interaction with in-scope targets.
 
 #### Web2 Active Recon
 

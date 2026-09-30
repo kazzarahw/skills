@@ -67,7 +67,7 @@ Map the system before analyzing it.
 
 ### Phase 2: Automated Analysis
 
-Run automated tools to identify known vulnerability patterns.
+Run `scripts/static-analysis-runner.sh` first — triage its output before hand-running tools. Run automated tools to identify known vulnerability patterns.
 
 #### Web2 Automated Analysis
 

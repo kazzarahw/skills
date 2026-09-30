@@ -94,6 +94,14 @@ Generate professional deliverables.
 
 ## Orchestration Process
 
+### Step 0: Establish Target
+
+No target yet → select one before any enumeration (this is look-once work; hand-rolled trawling burns hundreds of calls):
+1. Screen candidates (e.g. DeFiLlama TVL/rankings for web3) against: bounty or authorization exists, source code available, in-scope surface.
+2. Source-first verification before chain work: docs site → repo search → clone → audit reports (scope + known issues) → bounty scope table. Chain calls verify source-vs-deployment, never discover blind.
+3. Record the pick, its scope, and its repo in `wiki` + the engagement state file.
+4. Validate every target against scope with `scripts/scope-checker.py` before active testing.
+
 ### Step 1: Classify Engagement
 
 Determine the engagement type from the user's request:
@@ -247,10 +255,10 @@ For long engagements, maintain a state file at `./engagement-state.md`:
 
 ## Phase History
 
-| Phase | Started | Completed | Exit Criteria Met |
-|-------|---------|-----------|-------------------|
-| Recon | YYYY-MM-DD HH:MM | YYYY-MM-DD HH:MM | Yes/No |
-| Audit | YYYY-MM-DD HH:MM | — | — |
+| Phase | Started | Completed | Exit Criteria Met | Skill Used |
+|-------|---------|-----------|-------------------|------------|
+| Recon | YYYY-MM-DD HH:MM | YYYY-MM-DD HH:MM | Yes/No | recon |
+| Audit | YYYY-MM-DD HH:MM | — | — | — |
 
 ## Next Steps
 

@@ -47,7 +47,7 @@ done
 
 ## Stage 1: Deterministic Reproduction
 
-Run the finding or PoC against the target. Minimum 3 runs.
+Run the finding or PoC against the target. Minimum 3 runs. Drive the loop with `scripts/verify-runner.sh` and assert with `scripts/side-effect-assertions.py` — do not hand-roll the repetition.
 
 ### Procedure
 

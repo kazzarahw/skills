@@ -5,6 +5,10 @@
 - [[ProtoDAO]] — DeFi lending protocol, prior engagement
 - [[ArtBlock]] — NFT marketplace, September 2026 audit
 
+## Syntheses
+- [[Why TargetCorp's AD is Vulnerable]] — AD lateral movement analysis
+- [[ArtBlock Combined Attack Path: Reentrancy + Oracle Manipulation]] — Combined attack analysis, model-asserted
+
 ## Concepts
 - [[Cross-Site Scripting]] — XSS vulnerability class
 - [[Reentrancy]] — Smart contract reentrancy

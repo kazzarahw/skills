@@ -220,7 +220,7 @@ Periodically verify:
 
 1. **First run**: Create directory structure, `Index.md`, `log.md`, and `SCHEMA.md`
 2. **New engagement or topic**: Create `timeline` page (or `overview` for a topic), begin ingesting into `raw/`
-3. **After each phase or source**: Run lint, update Index, file syntheses, append to log
+3. **After each phase or source**: Run `python3 scripts/wiki-lint.py`, update Index, file syntheses, append to log
 4. **Cross-engagement**: Search wiki before querying raw; link related findings
 
 ## Scripts
