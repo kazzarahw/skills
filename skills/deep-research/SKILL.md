@@ -1,6 +1,7 @@
 ---
 name: deep-research
-description: Investigate topics in depth against primary sources and deliver cited reports with confidence levels and gaps. Use when the user asks to research a topic, run a deep dive or investigation, compare technologies or vendors, evaluate adoption, do competitive analysis or due diligence, check codebase behavior against upstream docs, or wants background with evidence or findings written up as a report or memo, even if they do not say research. For single-fact lookups or pure implementation with no investigation, skip it.
+description: >-
+  Investigate topics in depth against primary sources and deliver cited reports with confidence levels and gaps. Use when an engagement needs cited background on a target, vendor, or technique. Engagement skills (recon, audit) load this for research; findings hand back, never acted on here. For single-fact lookups or pure implementation with no investigation, skip it.
 license: Apache-2.0
 compatibility: Requires internet access for web research; codebase parts work offline.
 ---
@@ -54,3 +55,13 @@ Use `assets/report-template.md` exactly for deep reports (header, executive summ
 - `references/parallel-research.md`: read when the topic is broad enough to split across subagents.
 - `assets/report-template.md`: copy for the report skeleton.
 - `references/sources.md`: read when re-verifying guidance or answering provenance questions.
+
+## Consumers
+
+Engagement skills that should load this skill: `security-recon` (target, vendor, and actor intel), `security-audit` (protocol and codebase background), `security-wiki` (cited source material). This skill researches; it never audits, exploits, or verifies — hand findings back, don't act on them.
+
+## Mid-Work Checkpoints
+
+Periodically verify:
+1. **Am I still researching?** Audits, exploits, and verdicts belong to other skills.
+2. **Confidence labeled?** Every claim carries its level and its gaps.

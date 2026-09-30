@@ -1,6 +1,7 @@
 ---
 name: security-verify
-description: Verifies security findings and filters false positives across web2 and web3. Use before reporting any vulnerability, PoC, or exploit to confirm validity, reproducibility, and target-specificity. Two-stage verification combining deterministic reproduction with adversarial self-review. Use when you need to confirm a finding is valid before reporting it.
+description: >-
+  Gate before any report: confirms findings via deterministic reproduction plus adversarial review, verdicts VERIFIED / UNVERIFIABLE / BLOCKED. Use when reporting any vulnerability, PoC, or exploit — nothing ships without a verdict.
 ---
 
 # Security Verify
@@ -242,6 +243,19 @@ cast balance <address> --rpc-url $RPC_URL
 | `security-report` | Verification status in reports |
 | `security-coach` | Course correction |
 | `security-wiki` | Knowledge persistence |
+
+## Handoffs
+
+- `VERIFIED` → load `security-report` with the evidence pack.
+- `UNVERIFIABLE` after re-test → load `security-coach` for a new oracle angle, or mark inconclusive — never upgrade it yourself.
+- `BLOCKED` → stop and report the blocker; record it in `security-wiki`.
+
+## Mid-Work Checkpoints
+
+Periodically verify:
+1. **Am I in the right skill?** If the work drifted into another phase, hand off via `## Handoffs` instead of continuing here.
+2. **Am I routing verdicts?** VERIFIED, UNVERIFIABLE, and BLOCKED each have a next step — never collapse them.
+3. **Evidence attached?** No verdict leaves this skill without raw output and assertions.
 
 ## Gotchas
 

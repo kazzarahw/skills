@@ -1,6 +1,7 @@
 ---
 name: security-wiki
-description: Maintains a structured security knowledge base as interlinked markdown files. Use to record findings, techniques, and patterns discovered during engagements. The wiki is the agent's persistent memory across sessions. Use when you need to store, search, or cross-reference security knowledge across engagements.
+description: >-
+  Persistent knowledge base with provenance. Use when recording findings, techniques, and patterns at each phase end, or when prior knowledge applies. Security-report draws source material from it.
 ---
 
 # Security Wiki
@@ -182,6 +183,18 @@ Use `[[wikilinks]]` for all internal references.
 | `security-report` | Source material for reports |
 | `security-verify` | Store verification results |
 | `security-coach` | Store lessons learned and pattern recognition |
+
+## Handoffs
+
+- Phase output from any lifecycle skill belongs here — record findings, techniques, and patterns with provenance at each phase end.
+- Building a report → `security-report` draws source material from here.
+
+## Mid-Work Checkpoints
+
+Periodically verify:
+1. **Provenance on every entry?** No record without its source and verdict.
+2. **ADD-only?** Never rewrite history; supersede with new entries.
+3. **Phase ends recorded?** Each lifecycle phase leaves its output here.
 
 ## Gotchas
 

@@ -1,6 +1,7 @@
 ---
 name: security-forensics
-description: Performs incident response and investigation across web2 and web3 targets. Use after security incidents to trace funds, analyze transactions, identify attackers, and document evidence. Covers log analysis, malware analysis, disk forensics, memory forensics, on-chain tracing, fund tracking, and post-mortem analysis. Use when investigating a security incident or tracing fund movement.
+description: >-
+  Incident response and tracing: logs, malware, disk/memory, on-chain fund tracking. Use when investigating a security incident (forensics phase or standalone). Confirm conclusions with security-verify, deliver with security-report.
 ---
 
 # Security Forensics
@@ -186,6 +187,20 @@ Synthesize findings into actionable intelligence.
 | `security-report` | Generating investigation report |
 | `security-coach` | Course correction when investigation stalls |
 | `security-wiki` | Knowledge persistence |
+
+## Handoffs
+
+- Root cause points at a vulnerability → load `security-audit` (scoped) or `security-exploit` (fork-only proof).
+- Conclusions need confirmation → load `security-verify`.
+- Report due → load `security-report`.
+- Stuck → `security-coach`. Evidence and patterns → `security-wiki`.
+
+## Mid-Work Checkpoints
+
+Periodically verify:
+1. **Am I in the right skill?** If the work drifted into another phase, hand off via `## Handoffs` instead of continuing here.
+2. **Am I routing phase ends?** Conclusions move to verification, deliverables to report.
+3. **Evidence attached?** No finding leaves this skill without captured output.
 
 ## Gotchas
 

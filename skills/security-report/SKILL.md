@@ -1,6 +1,7 @@
 ---
 name: security-report
-description: Generates professional security reports across web2 and web3 engagements. Use after assessments, audits, or investigations to produce client-ready deliverables. Covers penetration test reports, audit reports, incident reports, and disclosure documentation with executive summaries, technical findings, severity ratings, and remediation guidance. Use when you need to produce a professional security report or deliverable.
+description: >-
+  Terminal phase: writes the client-ready report from VERIFIED findings only. Use when delivering an assessment, audit, or investigation. It never verifies — load security-verify first if any finding lacks a verdict.
 ---
 
 # Security Report
@@ -202,6 +203,18 @@ Each remediation item must:
 | `security-verify` | Verification status |
 | `security-coach` | Course correction |
 | `security-wiki` | Knowledge persistence |
+
+## Handoffs
+
+- Any finding lacks a `VERIFIED` verdict → stop and load `security-verify` first; this skill never verifies.
+- Missing source material → pull from `security-wiki` before asking the user.
+
+## Mid-Work Checkpoints
+
+Periodically verify:
+1. **Am I in the right skill?** If verification is missing, stop and hand off instead of writing around it.
+2. **Every finding VERIFIED?** Unverified findings are marked, never upgraded.
+3. **Provenance on everything?** No finding ships without its label and evidence pointer.
 
 ## Gotchas
 
