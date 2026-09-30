@@ -249,6 +249,7 @@ Verify remediations and deliver the final report.
 - Understand phase needs target context → load `security-recon` first; never re-enumerate by hand what recon already mapped.
 - Finding with a concrete exploit path → load `security-exploit` to prove it (testnets/forks only).
 - Finding ready to report → load `security-verify`; never report unverified.
+- Task is to write or deliver (not to find) → load `security-verify` or `security-report`; do not re-audit an existing finding.
 - Procedural gap (e.g. optimal Foundry/slither usage) → build a helper skill with `learn-skill` instead of improvising.
 - Stuck → `security-coach`. Phase done → persist to `wiki`.
 
