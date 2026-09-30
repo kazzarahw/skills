@@ -1,32 +1,30 @@
 ---
 name: security-wiki
 description: >-
-  Persistent knowledge base with provenance. Use when recording findings, techniques, and patterns at each phase end, or when prior knowledge applies. Security-report draws source material from it.
+  Persistent knowledge base with provenance, for engagements and general research alike. Use when recording anything worth keeping — findings, decisions, techniques, patterns — or when prior knowledge applies. Security-report draws source material from it.
 ---
 
-# Security Wiki
+# Wiki
 
-A structured, interlinked security knowledge base that serves as the agent's persistent memory. Designed for ADD-only growth with full provenance tracking.
+A structured, interlinked knowledge base that serves as the agent's persistent memory — the Karpathy llm-wiki pattern: raw sources stay immutable, the LLM owns a curated wiki layer, and everything compounds instead of re-deriving each session. Security engagements are the first domain profile; anything worth keeping (research, decisions, patterns, findings) belongs here. Designed for ADD-only growth with full provenance tracking.
 
 ## Three-Layer Architecture
 
 ```
-security-wiki/
-├── raw/              # Layer 1: Immutable source material
-│   ├── nmap/         #   Tool outputs (nmap, masscan, etc.)
-│   ├── nuclei/       #   Scanner results
-│   ├── burp/         #   Proxy captures
-│   ├── logs/         #   Log files, PCAP exports
-│   ├── chain/        #   On-chain data exports
-│   ├── notes/        #   Manual observations
-│   └── imports/      #   External reports, CVEs, advisories
+wiki-base/
+├── raw/              # Layer 1: Immutable source material (never edited)
+│   ├── notes/        #   Manual observations, transcripts, clips
+│   ├── docs/         #   Articles, papers, READMEs, advisories
+│   ├── imports/      #   External reports, CVEs, data exports
+│   └── security/     #   Domain profile: nmap, nuclei, burp, logs, PCAP, chain
 ├── wiki/             # Layer 2: LLM-maintained structured markdown
-│   ├── Index.md      #   Master navigation hub
+│   ├── Index.md      #   Master navigation hub (read first on every query)
+│   ├── log.md        #   Append-only record: ingests, queries, lints
 │   ├── entities/     #   People, orgs, projects, targets, contracts
-│   ├── concepts/     #   Vulnerability classes, techniques, methodologies
-│   ├── syntheses/    #   Query answers, analysis results
+│   ├── concepts/     #   Ideas, techniques, methodologies, vuln classes
+│   ├── syntheses/    #   Query answers and analysis, filed back
 │   ├── trails/       #   Associative paths through pages
-│   ├── timelines/    #   Chronological engagement hubs
+│   ├── timelines/    #   Chronological hubs (engagements, projects)
 │   ├── overviews/    #   Cluster landscapes for domains
 │   └── contradictions/ # Conflict analysis between sources
 └── SCHEMA.md         # Layer 3: Instructions for disciplined maintenance
@@ -39,12 +37,13 @@ security-wiki/
 | Type | Purpose | Example |
 |------|---------|---------|
 | `entity` | People, organizations, projects, targets, contracts | "TargetCorp", "Uniswap V3", "Metasploit Framework" |
-| `concept` | Vulnerability classes, techniques, methodologies | "SQL Injection", "Flash Loan Attack", "Pass-the-Hash" |
+| `concept` | Ideas, techniques, methodologies, vulnerability classes | "SQL Injection", "Flash Loan Attack", "Pass-the-Hash" |
 | `synthesis` | Saved query answers, analysis results | "Why TargetCorp's AD is vulnerable" |
 | `trail` | Associative paths through related pages | "Web App Attack Path → DB Compromise" |
-| `timeline` | Chronological hubs for engagements | "Engagement: TargetCorp 2026-09" |
+| `timeline` | Chronological hubs for engagements or projects | "Engagement: TargetCorp 2026-09" |
 | `overview` | Cluster landscapes for domains | "TargetCorp Attack Surface" |
 | `contradiction` | Conflict analysis between sources | "Port 443: HTTP vs HTTPS discrepancy" |
+| `log` | Append-only record (log.md): ingests, queries, lints | "## [2026-09-30] ingest \| TargetCorp nmap" |
 
 ## Core Operations
 
@@ -58,7 +57,8 @@ Read new source material, extract key information, integrate into wiki.
 3. Create or update wiki pages (ADD-only — never overwrite)
 4. Link to related pages via `[[wikilinks]]`
 5. Update `Index.md` with new entries
-6. Tag with appropriate provenance level
+6. Append to `wiki/log.md` with a parseable prefix (`## [YYYY-MM-DD] ingest | <source>`)
+7. Tag with appropriate provenance level
 
 **File naming**: `YYYY-MM-DD-source-briefdesc.md` in `raw/`
 
@@ -76,11 +76,13 @@ Read new source material, extract key information, integrate into wiki.
 Search the wiki first, then raw sources. File valuable answers back.
 
 **Procedure:**
-1. Search `wiki/` for existing knowledge
-2. If insufficient, search `raw/` for source material
-3. Synthesize answer from available evidence
-4. Save valuable answers as `synthesis` pages
-5. Link synthesis to source entities/concepts
+1. Read `wiki/Index.md` first to find relevant pages, then drill in
+2. Search `wiki/` for existing knowledge
+3. If insufficient, search `raw/` for source material
+4. Synthesize answer from available evidence
+5. Save valuable answers as `synthesis` pages
+6. Link synthesis to source entities/concepts
+7. Append the query to `wiki/log.md` (`## [YYYY-MM-DD] query | <question>`)
 
 **Why file answers back**: Prevents re-derivation, builds institutional knowledge, enables pattern recognition across engagements.
 
@@ -183,11 +185,14 @@ Use `[[wikilinks]]` for all internal references.
 | `security-report` | Source material for reports |
 | `security-verify` | Store verification results |
 | `security-coach` | Store lessons learned and pattern recognition |
+| `deep-research` | File cited reports as source material and syntheses |
 
 ## Handoffs
 
 - Phase output from any lifecycle skill belongs here — record findings, techniques, and patterns with provenance at each phase end.
 - Building a report → `security-report` draws source material from here.
+- Background needed first → load `deep-research`, then file its report here.
+- General knowledge (non-engagement) → ingest directly; no engagement required.
 
 ## Mid-Work Checkpoints
 
@@ -213,9 +218,9 @@ Periodically verify:
 
 ## Quick Start
 
-1. **First run**: Create directory structure, `Index.md`, and `SCHEMA.md`
-2. **New engagement**: Create `timeline` page, begin ingesting into `raw/`
-3. **After each phase**: Run lint, update Index, file syntheses
+1. **First run**: Create directory structure, `Index.md`, `log.md`, and `SCHEMA.md`
+2. **New engagement or topic**: Create `timeline` page (or `overview` for a topic), begin ingesting into `raw/`
+3. **After each phase or source**: Run lint, update Index, file syntheses, append to log
 4. **Cross-engagement**: Search wiki before querying raw; link related findings
 
 ## Scripts
