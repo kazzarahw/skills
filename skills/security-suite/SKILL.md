@@ -214,6 +214,64 @@ When transitioning between phases, explicitly:
 4. Load the next skill with `read_file`
 5. Carry forward evidence and context
 
+## Goal Restatement at Phase Transitions
+
+At each phase transition, restate the engagement context:
+
+```markdown
+## Phase Transition: [Current Phase] → [Next Phase]
+
+**Engagement Goal:** [One sentence — what is the overall objective?]
+**Current Phase:** [Phase name] — [Exit criteria status]
+**Findings So Far:** [Count by severity]
+**Evidence Captured:** [Yes/No — list any gaps]
+**Next Phase:** [Phase name] — [What will it accomplish?]
+**Next Skill:** [Skill name] — [What will it do?]
+```
+
+This combats attention decay and recency bias by re-injecting the goal into the conversation.
+
+## Engagement State File
+
+For long engagements, maintain a state file at `~/.nanobot/workspace/engagement-state.md`:
+
+```markdown
+# Engagement State
+
+**Started:** YYYY-MM-DD HH:MM
+**Type:** [Web2 pentest / Web3 audit / Mixed / Incident response / Advisory]
+**Target:** [Target identifier]
+**Current Phase:** [Phase name]
+**Phase Started:** YYYY-MM-DD HH:MM
+
+## Findings
+
+| Severity | Count | Last Updated |
+|----------|-------|--------------|
+| Critical | 0 | — |
+| High | 0 | — |
+| Medium | 0 | — |
+| Low | 0 | — |
+
+## Evidence Log
+
+- [YYYY-MM-DD HH:MM] [Tool] [Target] [Result summary]
+
+## Phase History
+
+| Phase | Started | Completed | Exit Criteria Met |
+|-------|---------|-----------|-------------------|
+| Recon | YYYY-MM-DD HH:MM | YYYY-MM-DD HH:MM | Yes/No |
+| Audit | YYYY-MM-DD HH:MM | — | — |
+
+## Next Steps
+
+- [ ] [Next action]
+- [ ] [Following action]
+```
+
+Update this file at each phase transition and every ~20 tool calls. This creates an external memory that survives context window pressure.
+
 ## Gotchas
 
 - **Web3 engagements often have web2 components.** A DeFi protocol audit should include the frontend, API, and infrastructure, not just the smart contracts.

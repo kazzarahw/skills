@@ -65,6 +65,29 @@ than frontier models. The optimizations include:
    phase exit criteria, and maintain output format requirements
 6. **Phase transition reminders** — the security-suite orchestrator explicitly
    reminds the model to route to the next skill at phase boundaries
+7. **Periodic self-audit** — SOUL.md instructs the model to pause every ~20 tool
+   calls and verify it's following the skill's process
+8. **Progress checkpoints** — the model writes engagement state to a file,
+   creating external memory that survives context window pressure
+9. **Goal restatement** — at each phase transition, the model restates the
+   engagement goal, combating attention decay and recency bias
+
+## Research Basis
+
+These techniques are based on research into AI agent skill adherence:
+
+- **Periodic Constraint Injection (PCI)** — re-injecting constraints at fixed
+  intervals can reduce drift by up to 77% when combined with other techniques
+- **Goal reminders** — explicit restatements at fixed turns reduce divergence
+  by up to 30%
+- **File-based checkpoints** — writing state to markdown files creates
+  durable external memory
+- **Self-audit** — periodic self-verification catches drift before it compounds
+
+No single technique eliminates drift entirely, but the combination of
+explicit descriptions, mid-work checkpoints, periodic self-audit, and
+external state files provides defense in depth against the multiple
+causes of drift (attention decay, recency bias, compaction loss).
 
 ## Validation
 
