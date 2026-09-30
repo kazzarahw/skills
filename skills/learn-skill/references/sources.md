@@ -23,7 +23,7 @@ What this skill's guidance rests on. Read this when the user asks where a practi
 - mattpocock `writing-for-agents` (context pointers, completion criteria, leading words, prohibitions that backfire, pruning no-ops): https://github.com/mattpocock/skills
 - OpenAI's skill-creator (scaffolding, what not to include in a skill): https://github.com/openai/skills
 - superagent-ai `skill-security` (threat categories for vetting; ideas only, no code copied): https://github.com/superagent-ai/skills
-- Research skills: mattpocock `research`, affaan-m `deep-research` (primary sources, sub-questions, citations, flagging single-source claims)
+- Research skills: mattpocock `research`, affaan-m `research` (primary sources, sub-questions, citations, flagging single-source claims)
 
 ## Research
 - SkillsBench (arXiv 2602.12670): curated skills raised pass rates by about 16 points on average, but many tasks got worse; self-generated skills gave no average benefit; focused skills with 2–3 modules beat exhaustive ones.

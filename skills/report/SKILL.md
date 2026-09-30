@@ -195,7 +195,7 @@ Each remediation item must:
 
 | Skill | When to Use |
 |-------|-------------|
-| `suite` | Orchestration and phase management |
+| `engagement` | Orchestration and phase management |
 | `recon` | Reconnaissance findings |
 | `audit` | Audit findings |
 | `exploit` | Exploit findings |
@@ -208,7 +208,7 @@ Each remediation item must:
 
 - Any finding lacks a `VERIFIED` verdict → stop and load `verify` first; this skill never verifies.
 - Missing source material → pull from `wiki` before asking the user.
-- Missing background → load `deep-research`, then file its report in `wiki`.
+- Missing background → load `research`, then file its report in `wiki`.
 - Deliverable done → file the report outline back to `wiki` as a synthesis.
 - Structure unclear → load `coach`.
 

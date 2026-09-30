@@ -10,4 +10,4 @@ Re-verification links for this skill's guidance; platform details change, so re-
 - Claude best practices: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
 - Claude overview and safety: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
 - Research method: CASRAI CRAAP https://casrai.org/guides/craap-test-evaluating-source-credibility and Boolean operators https://casrai.org/guides/boolean-search-operators-for-literature-searching
-- Harvested skills (MIT): mattpocock/skills research, affaan-m/ecc deep-research; ideas from rysweet/amplihack researching-topics. Provenance: harvest ledger kept with the skill source (not shipped with installs); re-express, do not copy, when refreshing from third-party skills.
+- Harvested skills (MIT): mattpocock/skills research, affaan-m/ecc research; ideas from rysweet/amplihack researching-topics. Provenance: harvest ledger kept with the skill source (not shipped with installs); re-express, do not copy, when refreshing from third-party skills.

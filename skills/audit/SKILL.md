@@ -1,7 +1,7 @@
 ---
 name: audit
 description: >-
-  Finds vulnerabilities in code and configs: static/dynamic analysis, review, threat modeling, contract and protocol audit. Use when working the audit phase or doing a standalone review. Full engagement? Start with suite. Prove hits with exploit, confirm with verify — never report unverified.
+  Finds vulnerabilities in code and configs: static/dynamic analysis, review, threat modeling, contract and protocol audit. Use when working the audit phase or doing a standalone review. Full engagement? Start with engagement. Prove hits with exploit, confirm with verify — never report unverified.
 ---
 
 # Security Audit
@@ -228,19 +228,19 @@ Audit ends here — remediation verification belongs to `verify` and delivery be
 
 | Skill | When to Use |
 |-------|-------------|
-| `suite` | Orchestration and phase management |
+| `engagement` | Orchestration and phase management |
 | `recon` | Attack surface mapping before audit |
 | `exploit` | Validate findings through exploitation |
 | `verify` | Verify findings before reporting |
 | `report` | Generate audit report |
 | `coach` | Course correction when audit stalls |
 | `wiki` | Knowledge persistence |
-| `deep-research` | Cited protocol and codebase background |
+| `research` | Cited protocol and codebase background |
 
 ## Handoffs
 
 - Understand phase needs target context → load `recon` first; never re-enumerate by hand what recon already mapped.
-- Protocol or codebase background missing → load `deep-research` before theorizing.
+- Protocol or codebase background missing → load `research` before theorizing.
 - Finding with a concrete exploit path → load `exploit` to prove it (testnets/forks only).
 - Finding ready to report → load `verify`; never report unverified.
 - Task is to write or deliver (not to find) → load `verify` or `report`; do not re-audit an existing finding.

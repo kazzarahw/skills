@@ -1,7 +1,7 @@
 ---
 name: recon
 description: >-
-  Maps attack surface: network scanning, OSINT, subdomain enumeration, service fingerprinting, blockchain analysis, address profiling, contract discovery. Use when opening the recon phase or doing a standalone recon task. Full engagement? Start with suite. Intel gaps needing cited depth go to deep-research.
+  Maps attack surface: network scanning, OSINT, subdomain enumeration, service fingerprinting, blockchain analysis, address profiling, contract discovery. Use when opening the recon phase or doing a standalone recon task. Full engagement? Start with engagement. Intel gaps needing cited depth go to research.
 ---
 
 # Security Recon
@@ -140,7 +140,7 @@ Identify initial risk indicators for prioritization.
 
 | Skill | When to Use |
 |-------|-------------|
-| `suite` | Orchestration and phase management |
+| `engagement` | Orchestration and phase management |
 | `audit` | Vulnerability identification from recon findings |
 | `exploit` | Target selection for exploitation |
 | `verify` | Verification of recon findings |
@@ -151,8 +151,8 @@ Identify initial risk indicators for prioritization.
 
 Act on these transitions immediately — load the named skill with the skill tool, do not continue by hand:
 - Recon complete → load `audit` with the attack surface map.
-- Target intel needs cited depth (vendor, protocol) → load `deep-research`.
-- People, company, or actor question → load `osint`, not `deep-research`.
+- Target intel needs cited depth (vendor, protocol) → load `research`.
+- People, company, or actor question → load `osint`, not `research`.
 - A finding needs confirmation before it leaves recon → load `verify`.
 - Stuck, looping, or off-track → load `coach`.
 - Phase done → record the map and indicators in `wiki`.

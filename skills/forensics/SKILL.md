@@ -179,7 +179,7 @@ Synthesize findings into actionable intelligence.
 
 | Skill | When to Use |
 |-------|-------------|
-| `suite` | Orchestration and phase management |
+| `engagement` | Orchestration and phase management |
 | `recon` | Initial attack surface mapping |
 | `audit` | Vulnerability identification |
 | `exploit` | Understanding attack methodology |
@@ -193,7 +193,7 @@ Synthesize findings into actionable intelligence.
 - Root cause points at a vulnerability → load `audit` (scoped) or `exploit` (fork-only proof).
 - Conclusions need confirmation → load `verify`.
 - Report due → load `report`.
-- Attacker/TTP intel needs cited depth → load `deep-research`.
+- Attacker/TTP intel needs cited depth → load `research`.
 - Stuck → `coach`. Evidence and patterns → `wiki`.
 
 ## Mid-Work Checkpoints

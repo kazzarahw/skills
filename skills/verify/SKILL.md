@@ -8,7 +8,7 @@ description: >-
 
 Verifies security findings and filters false positives across web2 and web3. Two stages: deterministic reproduction, then adversarial self-review.
 
-> **Note:** This skill is Phase 4 in the `suite` engagement lifecycle.
+> **Note:** This skill is Phase 4 in the `engagement` engagement lifecycle.
 
 ## Prerequisites
 
@@ -235,7 +235,7 @@ cast balance <address> --rpc-url $RPC_URL
 
 | Skill | When to Use |
 |-------|-------------|
-| `suite` | Orchestration and phase management |
+| `engagement` | Orchestration and phase management |
 | `recon` | Verify recon findings |
 | `audit` | Verify audit findings |
 | `exploit` | Verify exploit success |

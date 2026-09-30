@@ -177,7 +177,7 @@ Use `[[wikilinks]]` for all internal references.
 
 | Skill | When to Use |
 |-------|-------------|
-| `suite` | Orchestration and engagement tracking |
+| `engagement` | Orchestration and engagement tracking |
 | `recon` | Store recon findings and attack surface maps |
 | `audit` | Store audit findings and vulnerability analysis |
 | `exploit` | Store exploit techniques and attack paths |
@@ -185,13 +185,13 @@ Use `[[wikilinks]]` for all internal references.
 | `report` | Source material for reports |
 | `verify` | Store verification results |
 | `coach` | Store lessons learned and pattern recognition |
-| `deep-research` | File cited reports as source material and syntheses |
+| `research` | File cited reports as source material and syntheses |
 
 ## Handoffs
 
 - Phase output from any lifecycle skill belongs here — record findings, techniques, and patterns with provenance at each phase end.
 - Building a report → `report` draws source material from here.
-- Background needed first → load `deep-research`, then file its report here.
+- Background needed first → load `research`, then file its report here.
 - General knowledge (non-engagement) → ingest directly; no engagement required.
 
 ## Mid-Work Checkpoints

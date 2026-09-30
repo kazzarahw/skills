@@ -1,10 +1,10 @@
 ---
-name: suite
+name: engagement
 description: >-
   Entry point for any multi-phase security engagement across web2 and web3. Use when starting an assessment, pentest, contract audit, or incident response. Routes phases to the right skill and manages handoffs and engagement state. Single-phase task with a known skill? Load that skill directly instead.
 ---
 
-# Security Suite
+# Security Engagement
 
 Orchestrates security testing engagements across web2 and web3 targets. Routes to the correct skill, manages phase handoffs, and maintains engagement state.
 
@@ -143,21 +143,21 @@ Status: [Active/Complete]
 
 | Skill | When to Use | Referenced By |
 |-------|-------------|---------------|
-| `recon` | Mapping attack surface, enumerating targets | suite, exploit, audit, verify, forensics, report |
-| `osint` | Identity and selector investigation with verification standards | suite, recon, deep-research |
-| `audit` | Identifying vulnerabilities, assessing risk | suite, recon, exploit, verify, forensics, report |
-| `exploit` | Validating findings, demonstrating impact | suite, audit, verify, forensics, report |
-| `verify` | Filtering false positives, confirming findings | suite, exploit, audit |
-| `forensics` | Investigating incidents, tracing funds | suite, exploit |
-| `report` | Generating deliverables, documenting findings | suite, all skills |
-| `coach` | Course correction, strategy guidance | suite, all skills |
-| `wiki` | Knowledge persistence, cross-engagement learning | suite, all skills |
+| `recon` | Mapping attack surface, enumerating targets | engagement, exploit, audit, verify, forensics, report |
+| `osint` | Identity and selector investigation with verification standards | engagement, recon, research |
+| `audit` | Identifying vulnerabilities, assessing risk | engagement, recon, exploit, verify, forensics, report |
+| `exploit` | Validating findings, demonstrating impact | engagement, audit, verify, forensics, report |
+| `verify` | Filtering false positives, confirming findings | engagement, exploit, audit |
+| `forensics` | Investigating incidents, tracing funds | engagement, exploit |
+| `report` | Generating deliverables, documenting findings | engagement, all skills |
+| `coach` | Course correction, strategy guidance | engagement, all skills |
+| `wiki` | Knowledge persistence, cross-engagement learning | engagement, all skills |
 
 ## Handoffs
 
 - You are the entry point. A full engagement starts here — workers never self-orchestrate.
 - At each phase boundary: verify exit criteria, summarize evidence, then load the next skill with the skill tool (recon → audit → exploit → verify → report; forensics branch for incidents).
-- Intel gaps → `deep-research`. Stall anywhere → `coach`. Phase ends → persist state to `wiki`.
+- Intel gaps → `research`. Stall anywhere → `coach`. Phase ends → persist state to `wiki`.
 
 ## Shared Conventions
 

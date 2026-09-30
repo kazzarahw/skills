@@ -1,5 +1,5 @@
 ---
-name: deep-research
+name: research
 description: >-
   Investigate topics in depth against primary sources and deliver cited reports with confidence levels and gaps. Use when an engagement needs cited background on a target, vendor, or technique. Engagement skills (recon, audit) load this for research; findings hand back, never acted on here. For single-fact lookups or pure implementation with no investigation, skip it.
 license: Apache-2.0

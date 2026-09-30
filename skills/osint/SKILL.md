@@ -292,7 +292,7 @@ Collect broadly, publish narrowly. Remove everything not needed for the objectiv
 ## Handoffs
 
 - Exposed service or vulnerability indicator found → hand the attack-surface map to `recon`; never run active scans from this skill.
-- Background needed on a target, vendor, or technique → load `deep-research`, then file its report.
+- Background needed on a target, vendor, or technique → load `research`, then file its report.
 - Worth keeping → record in `wiki` with source grading attached.
 
 ## Resources

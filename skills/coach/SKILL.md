@@ -105,7 +105,7 @@ The coach is available to all skills:
 
 | Skill | When to Invoke |
 |-------|----------------|
-| `suite` | Engagement-level strategy guidance |
+| `engagement` | Engagement-level strategy guidance |
 | `recon` | When recon stalls or goes off-track |
 | `audit` | When audit approach is ineffective |
 | `exploit` | When exploit development is stuck |
@@ -117,7 +117,7 @@ The coach is available to all skills:
 ## Handoffs
 
 Name the redirect target explicitly, never hand-wave:
-- Needs facts about a target → `deep-research`.
+- Needs facts about a target → `research`.
 - Needs recon, audit, exploit, verify, or report work done → that skill.
 - Lesson worth keeping → `wiki`.
 

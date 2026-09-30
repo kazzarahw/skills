@@ -3,7 +3,7 @@ This skill incorporates material from MIT-licensed skills, used under the MIT Li
 - mattpocock/skills — `research` skill (primary-source investigation, per-claim citation, repo-file output).
   Copyright (c) 2026 Matt Pocock. MIT License. Source: https://github.com/mattpocock/skills
 
-- affaan-m/ecc — `deep-research` skill (sub-question planning, search strategy, full-read rule, report template, quality gates, untrusted-source safety, parallel research).
+- affaan-m/ecc — `research` skill (sub-question planning, search strategy, full-read rule, report template, quality gates, untrusted-source safety, parallel research).
   Copyright (c) 2026 Affaan Mustafa. MIT License. Source: https://github.com/affaan-m/ecc
 
 Ideas (re-expressed, no text copied) from rysweet/amplihack `researching-topics` (source tiers, strategy router, explainer structure).
