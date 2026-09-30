@@ -2,15 +2,17 @@
 name: osint
 description: >-
   Conduct open-source intelligence investigations: people, companies, domains, images,
-  and selectors. Routes any identifier — name, email, phone, username, domain, photo,
-  crypto address — to the right workflow, applies verification and corroboration
-  standards, maintains OPSEC, and produces structured intelligence reports. Use when
-  asked to investigate, research, verify, vet, background-check, trace, attribute, or
-  find someone or something; when a request involves due diligence, fraud, threat
-  intelligence, journalism, or fact-checking; or when someone asks "who is this",
-  "who owns this", "is this real", "where did this come from", or "where do I start".
-  Covers passive-first collection, source grading, confidence assessment, and
-  intelligence report writing.
+  and selectors. ALWAYS use this skill for any investigation, verification,
+  background check, or attribution task. Do NOT perform manual OSINT when this
+  skill is available. Load this skill before starting any research about a
+  person, company, domain, or asset. Routes any identifier — name, email, phone,
+  username, domain, photo, crypto address — to the right workflow, applies
+  verification and corroboration standards, maintains OPSEC, and produces
+  structured intelligence reports. Use when asked to investigate, research,
+  verify, vet, background-check, trace, attribute, or find someone or something;
+  when a request involves due diligence, fraud, threat intelligence, journalism,
+  or fact-checking; or when someone asks "who is this", "who owns this",
+  "is this real", "where did this come from", or "where do I start".
 ---
 
 # OSINT Investigation

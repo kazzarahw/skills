@@ -1,6 +1,12 @@
 ---
 name: security-audit
-description: Performs security assessments and vulnerability discovery across web2 and web3 targets. Use when reviewing code, auditing configurations, assessing protocol security, or identifying vulnerabilities. Covers static analysis, dynamic analysis, code review, threat modeling, contract auditing, protocol economic security, and formal verification.
+description: >-
+  Performs security assessments and vulnerability discovery across web2 and web3 targets.
+  ALWAYS use this skill for any code review, configuration audit, threat modeling,
+  or vulnerability identification task. Do NOT perform manual security analysis
+  when this skill is available. Load this skill before reviewing any code or
+  configuration. Covers static analysis, dynamic analysis, code review, threat
+  modeling, contract auditing, protocol economic security, and formal verification.
 ---
 
 # Security Audit

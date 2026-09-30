@@ -1,6 +1,13 @@
 ---
 name: security-forensics
-description: Performs incident response and investigation across web2 and web3 targets. Use after security incidents to trace funds, analyze transactions, identify attackers, and document evidence. Covers log analysis, malware analysis, disk forensics, memory forensics, on-chain tracing, fund tracking, and post-mortem analysis. Use when investigating a security incident or tracing fund movement.
+description: >-
+  Performs incident response and investigation across web2 and web3 targets.
+  ALWAYS use this skill for any incident response, investigation, fund
+  tracing, or fund tracking task. Do NOT perform manual log analysis or
+  investigation when this skill is available. Load this skill before starting
+  any incident response. Covers log analysis, malware analysis, disk forensics,
+  memory forensics, on-chain tracing, fund tracking, and post-mortem analysis.
+  Use when investigating a security incident or tracing fund movement.
 ---
 
 # Security Forensics

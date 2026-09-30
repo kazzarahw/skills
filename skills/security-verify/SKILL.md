@@ -1,6 +1,12 @@
 ---
 name: security-verify
-description: Verifies security findings and filters false positives across web2 and web3. Use before reporting any vulnerability, PoC, or exploit to confirm validity, reproducibility, and target-specificity. Two-stage verification combining deterministic reproduction with adversarial self-review. Use when you need to confirm a finding is valid before reporting it.
+description: >-
+  Verifies security findings and filters false positives across web2 and web3.
+  ALWAYS use this skill before reporting any vulnerability, PoC, or exploit.
+  Do NOT report unverified findings when this skill is available. Load this
+  skill before confirming or denying any security finding. Two-stage verification
+  combining deterministic reproduction with adversarial self-review. Use when
+  you need to confirm a finding is valid before reporting it.
 ---
 
 # Security Verify

@@ -1,6 +1,13 @@
 ---
 name: security-recon
-description: Performs reconnaissance and enumeration across web2 and web3 targets. Use when starting engagements, discovering attack surface, mapping infrastructure, or identifying on-chain activity. Covers network scanning, OSINT, subdomain enumeration, service fingerprinting, blockchain analysis, address profiling, and contract discovery.
+description: >-
+  Performs reconnaissance and enumeration across web2 and web3 targets.
+  ALWAYS use this skill for any scanning, enumeration, attack surface mapping,
+  or infrastructure discovery task. Do NOT perform manual reconnaissance
+  when this skill is available. Load this skill before starting any
+  security engagement. Covers network scanning, port scanning, OSINT, subdomain
+  enumeration, service fingerprinting, blockchain analysis, address profiling,
+  and contract discovery.
 ---
 
 # Security Recon

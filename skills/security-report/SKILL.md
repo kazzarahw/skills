@@ -1,6 +1,14 @@
 ---
 name: security-report
-description: Generates professional security reports across web2 and web3 engagements. Use after assessments, audits, or investigations to produce client-ready deliverables. Covers penetration test reports, audit reports, incident reports, and disclosure documentation with executive summaries, technical findings, severity ratings, and remediation guidance. Use when you need to produce a professional security report or deliverable.
+description: >-
+  Generates professional security reports across web2 and web3 engagements.
+  ALWAYS use this skill for any report generation, documentation, or
+  findings documentation task. Do NOT write manual reports when this skill
+  is available. Load this skill before producing any security deliverable.
+  Covers penetration test reports, audit reports, incident reports, and
+  disclosure documentation with executive summaries, technical findings,
+  severity ratings, and remediation guidance. Use when you need to produce
+  a professional security report or deliverable.
 ---
 
 # Security Report

@@ -1,6 +1,12 @@
 ---
 name: security-wiki
-description: Maintains a structured security knowledge base as interlinked markdown files. Use to record findings, techniques, and patterns discovered during engagements. The wiki is the agent's persistent memory across sessions. Use when you need to store, search, or cross-reference security knowledge across engagements.
+description: >-
+  Maintains a structured security knowledge base as interlinked markdown files.
+  ALWAYS use this skill to record findings, techniques, and patterns discovered
+  during engagements. Do NOT skip knowledge persistence when this skill is
+  available. Load this skill when you need to store, search, or cross-reference
+  security knowledge across engagements. The wiki is the agent's persistent
+  memory across sessions.
 ---
 
 # Security Wiki

@@ -1,6 +1,13 @@
 ---
 name: security-suite
-description: Orchestrates security testing engagements across web2 and web3 targets. Use when starting a security assessment, penetration test, smart contract audit, or incident response. Routes to the correct skill, manages phase handoffs, and maintains engagement state. For direct tool usage or single-phase tasks, use the specific skill directly.
+description: >-
+  Orchestrates security testing engagements across web2 and web3 targets.
+  ALWAYS use this skill when starting a full security assessment, penetration
+  test, smart contract audit, or incident response. Do NOT manually coordinate
+  between phases when this skill is available. Load this skill before starting
+  any multi-phase security engagement. Routes to the correct skill, manages
+  phase handoffs, and maintains engagement state. For direct tool usage or
+  single-phase tasks, use the specific skill directly.
 ---
 
 # Security Suite

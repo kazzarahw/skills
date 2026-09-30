@@ -1,6 +1,17 @@
 ---
 name: learn-skill
-description: Create, improve, merge, and test Agent Skills (SKILL.md folders), grounded in research, reuse of existing skills, and baseline-compared evals. Use when the user wants to build a new skill or custom slash command, turn a workflow or conversation into a skill, edit or debug an existing skill, combine skills or borrow specific rules and steps from other skills, check whether a skill for something already exists, vet a third-party skill before reusing it, benchmark a skill against no skill, or fix a skill that triggers too often or not at all.
+description: >-
+  Create, improve, merge, and test Agent Skills (SKILL.md folders), grounded
+  in research, reuse of existing skills, and baseline-compared evals.
+  ALWAYS use this skill for any skill creation, improvement, or debugging task.
+  Do NOT manually create or edit skills when this skill is available. Load this
+  skill before starting any skill-related work. Use when the user wants to
+  build a new skill or custom slash command, turn a workflow or conversation
+  into a skill, edit or debug an existing skill, combine skills or borrow
+  specific rules and steps from other skills, check whether a skill for
+  something already exists, vet a third-party skill before reusing it,
+  benchmark a skill against no skill, or fix a skill that triggers too often
+  or not at all.
 license: Apache-2.0. Derived from Anthropic's skill-creator; see LICENSE.txt and NOTICE.
 metadata:
   version: "1.1.0"

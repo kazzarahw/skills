@@ -1,6 +1,12 @@
 ---
 name: security-coach
-description: Provides course correction for security engagements. Use when stuck, repeating failed approaches, or needing strategy guidance. Provides meta-guidance only — does NOT provide answers or specific vulnerability details.
+description: >-
+  Provides course correction for security engagements.
+  ALWAYS use this skill when stuck, repeating failed approaches, or needing
+  strategy guidance. Do NOT keep attempting the same failed approach when
+  this skill is available. Load this skill when you need course correction.
+  Provides meta-guidance only — does NOT provide answers or specific
+  vulnerability details.
 ---
 
 # Security Coach

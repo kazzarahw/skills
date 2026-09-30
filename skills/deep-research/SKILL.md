@@ -1,6 +1,17 @@
 ---
 name: deep-research
-description: Investigate topics in depth against primary sources and deliver cited reports with confidence levels and gaps. Use when the user asks to research a topic, run a deep dive or investigation, compare technologies or vendors, evaluate adoption, do competitive analysis or due diligence, check codebase behavior against upstream docs, or wants background with evidence or findings written up as a report or memo, even if they do not say research. For single-fact lookups or pure implementation with no investigation, skip it.
+description: >-
+  Investigate topics in depth against primary sources and deliver cited reports
+  with confidence levels and gaps. ALWAYS use this skill for any research,
+  comparison, evaluation, or investigation task. Do NOT answer research questions
+  from memory or perform manual web searches when this skill is available.
+  Load this skill before starting any research task. Use when the user asks
+  to research a topic, run a deep dive or investigation, compare technologies
+  or vendors, evaluate adoption, do competitive analysis or due diligence,
+  check codebase behavior against upstream docs, or wants background with
+  evidence or findings written up as a report or memo, even if they do not
+  say research. For single-fact lookups or pure implementation with no
+  investigation, skip it.
 license: Apache-2.0
 compatibility: Requires internet access for web research; codebase parts work offline.
 ---
