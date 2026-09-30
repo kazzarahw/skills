@@ -153,6 +153,16 @@ Identify initial risk indicators for prioritization.
 | `security-coach` | Course correction when recon stalls |
 | `security-wiki` | Knowledge persistence across engagements |
 
+## Mid-Work Checkpoints
+
+When working through this skill, periodically verify:
+
+1. **Am I following the skill's process?** If improvising, stop and re-read this SKILL.md.
+2. **Have I met the current phase's exit criteria?** Do not move to the next phase until the current one is complete.
+3. **Am I capturing evidence for every finding?** Each finding needs tool output or on-chain data — not just my assertion.
+4. **Am I using the output format?** The report template at the end is mandatory, not optional.
+5. **Am I staying in scope?** Check every target against the authorization before scanning.
+
 ## Gotchas
 
 - **Version banners can be spoofed.** Always confirm with behavioral testing before relying on version-specific exploits.

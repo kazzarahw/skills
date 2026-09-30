@@ -119,6 +119,15 @@ The coach is available to all skills:
 | `security-verify` | When verification approach is flawed |
 | `security-wiki` | When knowledge organization is inefficient |
 
+## Mid-Work Checkpoints
+
+When providing course correction, periodically verify:
+
+1. **Am I providing meta-guidance only?** I must not reveal answers or specific vulnerability details.
+2. **Am I suggesting alternative approaches?** The correction should point to a different strategy, not the solution.
+3. **Am I observing the agent's behavior?** Base corrections on observed patterns, not assumptions.
+4. **Am I being timely?** Intervene when the agent is stuck or repeating failures — not before.
+
 ## Gotchas
 
 - **The coach is not a crutch.** If the coach is invoked more than 3 times for the same pattern, the agent should escalate to the user.

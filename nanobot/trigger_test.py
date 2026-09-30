@@ -115,6 +115,21 @@ def test_trigger(phrase, description):
     return (matches / len(phrase_words)) * 100
 
 
+def check_mid_work_adherence():
+    """Check that all skills have Mid-Work Checkpoints sections."""
+    skills_dir = os.path.join(os.path.dirname(__file__), '..', 'skills')
+    missing = []
+    for name in sorted(os.listdir(skills_dir)):
+        path = os.path.join(skills_dir, name, 'SKILL.md')
+        if not os.path.isfile(path):
+            continue
+        with open(path) as f:
+            content = f.read()
+        if '## Mid-Work Checkpoints' not in content:
+            missing.append(name)
+    return missing
+
+
 def main():
     descriptions = load_descriptions()
     failures = []
@@ -142,15 +157,27 @@ def main():
             print(f'  {status} ({pct:5.1f}%) "{phrase}"')
 
     print('\n' + '=' * 70)
-    print(f'Results: {passed}/{total} passed ({passed/total*100:.1f}%)')
+    print(f'Trigger Results: {passed}/{total} passed ({passed/total*100:.1f}%)')
 
-    if failures:
-        print('\nFailures:')
-        for skill, phrase, pct in failures:
-            print(f'  - {skill}: "{phrase}" ({pct:.1f}% overlap)')
+    # Check mid-work adherence
+    print('\nMid-Work Adherence Check')
+    print('=' * 70)
+    missing_checkpoints = check_mid_work_adherence()
+    if missing_checkpoints:
+        print(f'FAIL: {len(missing_checkpoints)} skills missing Mid-Work Checkpoints:')
+        for skill in missing_checkpoints:
+            print(f'  - {skill}')
+    else:
+        print('PASS: All skills have Mid-Work Checkpoints sections')
+
+    if failures or missing_checkpoints:
+        if failures:
+            print('\nTrigger Failures:')
+            for skill, phrase, pct in failures:
+                print(f'  - {skill}: "{phrase}" ({pct:.1f}% overlap)')
         sys.exit(1)
     else:
-        print('\nAll trigger tests passed!')
+        print('\nAll tests passed!')
         sys.exit(0)
 
 

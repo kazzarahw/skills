@@ -152,6 +152,16 @@ Once the body is stable, offer description optimization: about 20 realistic shou
 - For claude.ai or the Claude API, validate with `--target claude-upload`, then run `cd <skill-dir> && python3 -B -m scripts.package_skill <abs-skill-dir> <abs-out-dir>` and hand over the `.skill` file.
 - Tell the user how to invoke the skill, what it should and should not trigger on, which agents it was tested on, and what was not tested.
 
+## Mid-Work Checkpoints
+
+When working through this skill, periodically verify:
+
+1. **Am I following the phase workflow?** Check the current phase against the phase table.
+2. **Have I met the current phase's exit criteria?** Do not move to the next phase until the current one is complete.
+3. **Am I tracking progress in the workspace?** Keep the brief, spec, and iteration files up to date.
+4. **Am I comparing against baseline?** Every improvement must be measured against the no-skill baseline.
+5. **Am I iterating based on evidence?** Use eval results and transcripts to guide improvements.
+
 ## Bundled resources
 
 | File | Read or run it when |

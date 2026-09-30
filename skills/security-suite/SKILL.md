@@ -195,6 +195,25 @@ Each skill defines its own output format. All formats include:
 - Evidence with reproduction steps
 - Recommendations
 
+## Mid-Work Checkpoints
+
+When orchestrating an engagement, periodically verify:
+
+1. **Am I following the engagement lifecycle?** Check the current phase against the phase table.
+2. **Have I met the current phase's exit criteria?** Do not transition until the current phase is complete.
+3. **Am I routing to the correct skill?** Each phase has a designated skill — load it before continuing.
+4. **Am I carrying forward context?** Summarize findings for the next phase before transitioning.
+5. **Am I tracking engagement state?** Maintain the running engagement log.
+
+## Phase Transition Reminders
+
+When transitioning between phases, explicitly:
+1. State the current phase and its exit criteria
+2. Summarize findings from the completed phase
+3. Name the next phase and its skill
+4. Load the next skill with `read_file`
+5. Carry forward evidence and context
+
 ## Gotchas
 
 - **Web3 engagements often have web2 components.** A DeFi protocol audit should include the frontend, API, and infrastructure, not just the smart contracts.

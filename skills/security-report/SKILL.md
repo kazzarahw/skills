@@ -211,6 +211,16 @@ Each remediation item must:
 | `security-coach` | Course correction |
 | `security-wiki` | Knowledge persistence |
 
+## Mid-Work Checkpoints
+
+When working through this skill, periodically verify:
+
+1. **Am I following the skill's process?** If improvising, stop and re-read this SKILL.md.
+2. **Have I met the current phase's exit criteria?** Do not move to the next phase until the current one is complete.
+3. **Am I using the report template?** The output format is mandatory, not optional.
+4. **Am I including all required sections?** Executive summary, findings, evidence, recommendations.
+5. **Am I maintaining severity ratings?** Every finding needs a severity rating with justification.
+
 ## Gotchas
 
 - **Never fabricate evidence.** A finding without evidence is worse than no finding — it destroys credibility.

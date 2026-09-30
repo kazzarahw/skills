@@ -244,6 +244,16 @@ Collect broadly, publish narrowly. Remove everything not needed for the objectiv
 
 **Done when** the report contains no third-party data the objective doesn't need, every claim has a source and confidence grade, and the format matches the audience.
 
+## Mid-Work Checkpoints
+
+When working through this skill, periodically verify:
+
+1. **Am I following the skill's process?** If improvising, stop and re-read this SKILL.md.
+2. **Have I met the current step's done criteria?** Do not move to the next step until the current one is complete.
+3. **Am I grading sources and confidence?** Every finding needs a source grade and confidence level.
+4. **Am I maintaining the report structure?** The intelligence report format is mandatory, not optional.
+5. **Am I staying within authorized scope?** Check every investigation step against the scope definition.
+
 ## Gotchas
 
 ### Common Failure Modes

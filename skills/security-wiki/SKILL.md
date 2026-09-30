@@ -189,6 +189,16 @@ Use `[[wikilinks]]` for all internal references.
 | `security-verify` | Store verification results |
 | `security-coach` | Store lessons learned and pattern recognition |
 
+## Mid-Work Checkpoints
+
+When maintaining the wiki, periodically verify:
+
+1. **Am I following the ADD-only principle?** Never delete or modify existing pages — only add new ones.
+2. **Am I including provenance?** Every entry needs source, date, and author.
+3. **Am I using the page schema?** Follow the defined structure for each page type.
+4. **Am I cross-referencing?** Link related pages to build the knowledge graph.
+5. **Am I tracking changes?** Use the change log to record what was added and why.
+
 ## Gotchas
 
 | Gotcha | Mitigation |

@@ -194,6 +194,16 @@ Synthesize findings into actionable intelligence.
 | `security-coach` | Course correction when investigation stalls |
 | `security-wiki` | Knowledge persistence |
 
+## Mid-Work Checkpoints
+
+When working through this skill, periodically verify:
+
+1. **Am I following the skill's process?** If improvising, stop and re-read this SKILL.md.
+2. **Have I met the current phase's exit criteria?** Do not move to the next phase until the current one is complete.
+3. **Am I preserving evidence?** Every piece of evidence needs timestamp, source, and chain of custody.
+4. **Am I using the report template?** The incident report format is mandatory, not optional.
+5. **Am I staying in scope?** Check every investigation step against the incident scope.
+
 ## Gotchas
 
 - **Mixers/tumblers obscure fund flows.** Tornado Cash and similar mixers break the on-chain link between source and destination. Post-mixing funds are extremely difficult to trace.

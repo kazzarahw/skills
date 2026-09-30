@@ -60,6 +60,11 @@ than frontier models. The optimizations include:
    model exactly what to do
 4. **SOUL.md behavioral instructions** — creates a system-level expectation
    that skills should be checked first
+5. **Mid-Work Checkpoints** — every skill now has a "Mid-Work Checkpoints" section
+   that reminds the model to re-read the skill if drifting, check progress against
+   phase exit criteria, and maintain output format requirements
+6. **Phase transition reminders** — the security-suite orchestrator explicitly
+   reminds the model to route to the next skill at phase boundaries
 
 ## Validation
 

@@ -249,6 +249,16 @@ cast balance <address> --rpc-url $RPC_URL
 | `security-coach` | Course correction |
 | `security-wiki` | Knowledge persistence |
 
+## Mid-Work Checkpoints
+
+When working through this skill, periodically verify:
+
+1. **Am I following the two-stage process?** Deterministic reproduction first, then adversarial self-review.
+2. **Have I met the current stage's exit criteria?** Do not move to the next stage until the current one is complete.
+3. **Am I being adversarial enough?** The self-review must actively try to disprove the finding.
+4. **Am I documenting the verification method?** Each verification needs a reproducible method.
+5. **Am I filtering false positives?** Unverified findings must be marked as such — not reported as confirmed.
+
 ## Gotchas
 
 - **Hallucinated success is the #1 verification failure.** A significant portion of verification failures are false completions. The model believes it succeeded when it did not. Mitigation: Require side-effect assertions, not just output matching.
