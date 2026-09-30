@@ -1,7 +1,7 @@
 ---
 name: wiki
 description: >-
-  Persistent knowledge base with provenance, for engagements and general research alike. Use when recording anything worth keeping — findings, decisions, techniques, patterns — or when prior knowledge applies. Security-report draws source material from it.
+  Persistent knowledge base with provenance, for engagements and general research alike. Use when recording anything worth keeping — findings, decisions, techniques, patterns — or when prior knowledge applies. `report` draws source material from it.
 ---
 
 # Wiki
@@ -177,20 +177,20 @@ Use `[[wikilinks]]` for all internal references.
 
 | Skill | When to Use |
 |-------|-------------|
-| `security-suite` | Orchestration and engagement tracking |
-| `security-recon` | Store recon findings and attack surface maps |
-| `security-audit` | Store audit findings and vulnerability analysis |
-| `security-exploit` | Store exploit techniques and attack paths |
-| `security-forensics` | Store investigation findings and evidence |
-| `security-report` | Source material for reports |
-| `security-verify` | Store verification results |
-| `security-coach` | Store lessons learned and pattern recognition |
+| `suite` | Orchestration and engagement tracking |
+| `recon` | Store recon findings and attack surface maps |
+| `audit` | Store audit findings and vulnerability analysis |
+| `exploit` | Store exploit techniques and attack paths |
+| `forensics` | Store investigation findings and evidence |
+| `report` | Source material for reports |
+| `verify` | Store verification results |
+| `coach` | Store lessons learned and pattern recognition |
 | `deep-research` | File cited reports as source material and syntheses |
 
 ## Handoffs
 
 - Phase output from any lifecycle skill belongs here — record findings, techniques, and patterns with provenance at each phase end.
-- Building a report → `security-report` draws source material from here.
+- Building a report → `report` draws source material from here.
 - Background needed first → load `deep-research`, then file its report here.
 - General knowledge (non-engagement) → ingest directly; no engagement required.
 

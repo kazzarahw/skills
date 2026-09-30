@@ -289,6 +289,12 @@ Collect broadly, publish narrowly. Remove everything not needed for the objectiv
 - `references/opsec.md` — Detailed OPSEC guidance
 - `assets/report-template.md` — Report template
 
+## Handoffs
+
+- Exposed service or vulnerability indicator found → hand the attack-surface map to `recon`; never run active scans from this skill.
+- Background needed on a target, vendor, or technique → load `deep-research`, then file its report.
+- Worth keeping → record in `wiki` with source grading attached.
+
 ## Resources
 
 - [OSINT Framework](https://osintframework.com/) — Curated tool directory
