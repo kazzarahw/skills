@@ -1,6 +1,7 @@
 ---
 name: security-audit
-description: Performs security assessments and vulnerability discovery across web2 and web3 targets. Use when reviewing code, auditing configurations, assessing protocol security, or identifying vulnerabilities. Covers static analysis, dynamic analysis, code review, threat modeling, contract auditing, protocol economic security, and formal verification.
+description: >-
+  Finds vulnerabilities in code and configs: static/dynamic analysis, review, threat modeling, contract and protocol audit. Use when working the audit phase or doing a standalone review. Full engagement? Start with security-suite. Prove hits with security-exploit, confirm with security-verify — never report unverified.
 ---
 
 # Security Audit
@@ -242,6 +243,24 @@ Verify remediations and deliver the final report.
 | `security-report` | Generate audit report |
 | `security-coach` | Course correction when audit stalls |
 | `security-wiki` | Knowledge persistence |
+
+## Handoffs
+
+- Understand phase needs target context → load `security-recon` first; never re-enumerate by hand what recon already mapped.
+- Finding with a concrete exploit path → load `security-exploit` to prove it (testnets/forks only).
+- Finding ready to report → load `security-verify`; never report unverified.
+- Procedural gap (e.g. optimal Foundry/slither usage) → build a helper skill with `learn-skill` instead of improvising.
+- Stuck → `security-coach`. Phase done → persist to `security-wiki`.
+
+## Mid-Work Checkpoints
+
+When working through this skill, periodically verify:
+
+1. **Am I following the skill's process?** If improvising, stop and re-read this SKILL.md.
+2. **Have I met the current phase's exit criteria?** Do not move to the next phase until the current one is complete.
+3. **Am I capturing evidence for every finding?** Each finding needs tool output or code references — not just my assertion.
+4. **Am I using the output format?** The report template at the end is mandatory, not optional.
+5. **Am I staying in scope?** Check every target against the authorization before testing.
 
 ## Gotchas
 

@@ -1,6 +1,7 @@
 ---
 name: security-coach
-description: Provides course correction for security engagements. Use when stuck, repeating failed approaches, or needing strategy guidance. Provides meta-guidance only — does NOT provide answers or specific vulnerability details.
+description: >-
+  Course correction for security engagements. Use when stuck, looping failures, or drifting from the objective. Meta-guidance only — never answers or vulnerability details; names the skill that should do the work instead.
 ---
 
 # Security Coach
@@ -112,6 +113,20 @@ The coach is available to all skills:
 | `security-report` | When report structure is unclear |
 | `security-verify` | When verification approach is flawed |
 | `security-wiki` | When knowledge organization is inefficient |
+
+## Handoffs
+
+Name the redirect target explicitly, never hand-wave:
+- Needs facts about a target → `deep-research`.
+- Needs recon, audit, exploit, verify, or report work done → that skill.
+- Lesson worth keeping → `security-wiki`.
+
+## Mid-Work Checkpoints
+
+Periodically verify:
+1. **Am I advising, not doing?** Answers and vulnerability details belong to other skills.
+2. **Did I name the redirect?** Every intervention ends with an explicit skill target.
+3. **Am I fading?** Solved patterns become handoffs and wiki entries, not repeat coaching.
 
 ## Gotchas
 

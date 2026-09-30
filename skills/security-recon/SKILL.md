@@ -1,6 +1,7 @@
 ---
 name: security-recon
-description: Performs reconnaissance and enumeration across web2 and web3 targets. Use when starting engagements, discovering attack surface, mapping infrastructure, or identifying on-chain activity. Covers network scanning, OSINT, subdomain enumeration, service fingerprinting, blockchain analysis, address profiling, and contract discovery.
+description: >-
+  Maps attack surface: network scanning, OSINT, subdomain enumeration, service fingerprinting, blockchain analysis, address profiling, contract discovery. Use when opening the recon phase or doing a standalone recon task. Full engagement? Start with security-suite. Intel gaps needing cited depth go to deep-research.
 ---
 
 # Security Recon
@@ -145,6 +146,22 @@ Identify initial risk indicators for prioritization.
 | `security-verify` | Verification of recon findings |
 | `security-coach` | Course correction when recon stalls |
 | `security-wiki` | Knowledge persistence across engagements |
+
+## Handoffs
+
+Act on these transitions immediately — load the named skill with the skill tool, do not continue by hand:
+- Recon complete → load `security-audit` with the attack surface map.
+- Target intel needs cited depth (vendor, protocol, actor) → load `deep-research`.
+- A finding needs confirmation before it leaves recon → load `security-verify`.
+- Stuck, looping, or off-track → load `security-coach`.
+- Phase done → record the map and indicators in `security-wiki`.
+
+## Mid-Work Checkpoints
+
+Periodically verify:
+1. **Am I in the right skill?** If the work drifted into another phase, hand off via `## Handoffs` instead of continuing here.
+2. **Am I routing phase ends?** Findings and maps move to other skills — never absorb them.
+3. **Evidence attached?** No finding leaves this skill without captured output.
 
 ## Gotchas
 

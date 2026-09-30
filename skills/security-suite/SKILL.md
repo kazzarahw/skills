@@ -1,6 +1,7 @@
 ---
 name: security-suite
-description: Orchestrates security testing engagements across web2 and web3 targets. Use when starting a security assessment, penetration test, smart contract audit, or incident response. Routes to the correct skill, manages phase handoffs, and maintains engagement state. For direct tool usage or single-phase tasks, use the specific skill directly.
+description: >-
+  Entry point for any multi-phase security engagement across web2 and web3. Use when starting an assessment, pentest, contract audit, or incident response. Routes phases to the right skill and manages handoffs and engagement state. Single-phase task with a known skill? Load that skill directly instead.
 ---
 
 # Security Suite
@@ -151,6 +152,12 @@ Status: [Active/Complete]
 | `security-coach` | Course correction, strategy guidance | suite, all skills |
 | `security-wiki` | Knowledge persistence, cross-engagement learning | suite, all skills |
 
+## Handoffs
+
+- You are the entry point. A full engagement starts here — workers never self-orchestrate.
+- At each phase boundary: verify exit criteria, summarize evidence, then load the next skill with the skill tool (recon → audit → exploit → verify → report; forensics branch for incidents).
+- Intel gaps → `deep-research`. Stall anywhere → `security-coach`. Phase ends → persist state to `security-wiki`.
+
 ## Shared Conventions
 
 ### Provenance Labels
@@ -187,6 +194,83 @@ Each skill defines its own output format. All formats include:
 - Findings with severity and provenance
 - Evidence with reproduction steps
 - Recommendations
+
+## Mid-Work Checkpoints
+
+When orchestrating an engagement, periodically verify:
+
+1. **Am I following the engagement lifecycle?** Check the current phase against the phase table.
+2. **Have I met the current phase's exit criteria?** Do not transition until the current phase is complete.
+3. **Am I routing to the correct skill?** Each phase has a designated skill — load it before continuing.
+4. **Am I carrying forward context?** Summarize findings for the next phase before transitioning.
+5. **Am I tracking engagement state?** Maintain the running engagement log.
+
+## Phase Transition Reminders
+
+When transitioning between phases, explicitly:
+1. State the current phase and its exit criteria
+2. Summarize findings from the completed phase
+3. Name the next phase and its skill
+4. Load the next skill with `read_file`
+5. Carry forward evidence and context
+
+## Goal Restatement at Phase Transitions
+
+At each phase transition, restate the engagement context:
+
+```markdown
+## Phase Transition: [Current Phase] → [Next Phase]
+
+**Engagement Goal:** [One sentence — what is the overall objective?]
+**Current Phase:** [Phase name] — [Exit criteria status]
+**Findings So Far:** [Count by severity]
+**Evidence Captured:** [Yes/No — list any gaps]
+**Next Phase:** [Phase name] — [What will it accomplish?]
+**Next Skill:** [Skill name] — [What will it do?]
+```
+
+This combats attention decay and recency bias by re-injecting the goal into the conversation.
+
+## Engagement State File
+
+For long engagements, maintain a state file at `./engagement-state.md`:
+
+```markdown
+# Engagement State
+
+**Started:** YYYY-MM-DD HH:MM
+**Type:** [Web2 pentest / Web3 audit / Mixed / Incident response / Advisory]
+**Target:** [Target identifier]
+**Current Phase:** [Phase name]
+**Phase Started:** YYYY-MM-DD HH:MM
+
+## Findings
+
+| Severity | Count | Last Updated |
+|----------|-------|--------------|
+| Critical | 0 | — |
+| High | 0 | — |
+| Medium | 0 | — |
+| Low | 0 | — |
+
+## Evidence Log
+
+- [YYYY-MM-DD HH:MM] [Tool] [Target] [Result summary]
+
+## Phase History
+
+| Phase | Started | Completed | Exit Criteria Met |
+|-------|---------|-----------|-------------------|
+| Recon | YYYY-MM-DD HH:MM | YYYY-MM-DD HH:MM | Yes/No |
+| Audit | YYYY-MM-DD HH:MM | — | — |
+
+## Next Steps
+
+- [ ] [Next action]
+- [ ] [Following action]
+```
+
+Update this file at each phase transition and every ~20 tool calls. This creates an external memory that survives context window pressure.
 
 ## Gotchas
 
