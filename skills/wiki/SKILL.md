@@ -223,6 +223,20 @@ Periodically verify:
 3. **After each phase or source**: Run `python3 scripts/wiki-lint.py`, update Index, file syntheses, append to log
 4. **Cross-engagement**: Search wiki before querying raw; link related findings
 
+## Session Orientation
+
+Every session that touches the wiki orients FIRST, before ingesting, querying, or linting:
+
+1. Read `SCHEMA.md` — domain, conventions, tag taxonomy.
+2. Read `Index.md` — what pages exist and their summaries.
+3. Scan the last ~30 lines of `log.md` — recent activity.
+
+This prevents duplicate pages, missed cross-references, schema violations, and repeated work. For large wikis (100+ pages), grep for the topic before creating anything new.
+
+## Store Location
+
+`WIKI_PATH` environment variable points at the store; default `~/wiki`.
+
 ## Scripts
 
 - `scripts/wiki-search.py` — Search the wiki (title, tag, content matching with scoring)
