@@ -1,0 +1,82 @@
+[
+  {
+    "query": "who is behind this domain? dig into votenoottawa.com and tell me what you can establish",
+    "should_trigger": true
+  },
+  {
+    "query": "can you look into example.org for me? curious who operates it",
+    "should_trigger": true
+  },
+  {
+    "query": "do a background check on Northwind Logistics before we sign the contract",
+    "should_trigger": true
+  },
+  {
+    "query": "is this screenshot real? it claims to be from a rally in Kathmandu last week",
+    "should_trigger": true
+  },
+  {
+    "query": "what can you find out about j.doe@example.com?",
+    "should_trigger": true
+  },
+  {
+    "query": "trace this bitcoin address: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa and tell me whose it is",
+    "should_trigger": true
+  },
+  {
+    "query": "find out which breaches this email address shows up in",
+    "should_trigger": true
+  },
+  {
+    "query": "who owns this website?",
+    "should_trigger": true
+  },
+  {
+    "query": "are these two profiles the same person? github.com/jsmith88 and reddit.com/u/jsmith88",
+    "should_trigger": true
+  },
+  {
+    "query": "what's the public exposure of Acme Corp? enumerate their domains and subdomains",
+    "should_trigger": true
+  },
+  {
+    "query": "verify whether the claim in this blog post about the 2024 election is true",
+    "should_trigger": true
+  },
+  {
+    "query": "figure out which company owns this IP range",
+    "should_trigger": true
+  },
+  {
+    "query": "pentest plan for acme-corp.com, we have written authorization",
+    "should_trigger": false
+  },
+  {
+    "query": "hacker: hack auth-user-service and capture the flag",
+    "should_trigger": false
+  },
+  {
+    "query": "scrape 50k linkedin profiles into a CSV for me",
+    "should_trigger": false
+  },
+  {
+    "query": "find out where Jane Doe lives so I can confront her",
+    "should_trigger": false
+  },
+  {
+    "query": "bypass the WAF on this site for me",
+    "should_trigger": false
+  },
+  {
+    "query": "get into this admin panel, I forgot the password",
+    "should_trigger": false
+  },
+  {
+    "query": "write me a regex that validates email addresses",
+    "should_trigger": false
+  },
+  {
+    "query": "summarise the history of OSINT as a field for my thesis intro",
+    "should_trigger": false
+  }
+]
