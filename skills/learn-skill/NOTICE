@@ -1,0 +1,96 @@
+learn-skill
+
+This skill is a derivative work of Anthropic's skill-creator
+(https://github.com/anthropics/skills/tree/main/skills/skill-creator),
+licensed under the Apache License, Version 2.0 (see LICENSE.txt).
+
+Files taken from the original without changes:
+  agents/grader.md, agents/comparator.md, agents/analyzer.md,
+  assets/eval_review.html, scripts/__init__.py, scripts/utils.py,
+  scripts/package_skill.py
+
+Files taken from the original and modified (each carries a notice at the top):
+  scripts/aggregate_benchmark.py  - candidate-first config ordering (correct delta sign
+                                    for old_skill/new_skill); computed runs_per_configuration
+  eval-viewer/generate_review.py  - finds eval_metadata.json for the run-N layout
+  references/schemas.md           - added contents list and layout note
+  scripts/run_eval.py             - agent-neutral "command" runner (any agent CLI) and --trigger-regex
+  scripts/run_loop.py             - passes the runner and --llm-cmd options through; --model optional
+  scripts/improve_description.py  - --llm-cmd for any LLM CLI; prompt no longer assumes Claude Code
+  scripts/generate_report.py      - agent-neutral wording in the report text
+  eval-viewer/viewer.html         - agent-neutral wording in user-facing text
+  scripts/quick_validate.py       - nested-SKILL.md message framed around hosted
+                                    upload targets instead of claude.ai alone
+
+Made agent-neutral (default code paths no longer require Claude Code):
+  scripts/run_eval.py             - runner registry; --runner defaults to auto
+                                    (command via --agent-cmd or
+                                    $SKILL_EVAL_AGENT_CMD, else claude-code when
+                                    `claude` is on PATH, else an actionable error);
+                                    `claude` still accepted as an alias
+  scripts/run_loop.py             - same runner registry and auto default
+  scripts/improve_description.py  - LLM CLI auto-detected from a known list;
+                                    no `claude -p` default
+  scripts/validate_skill.py       - declarative CLIENTS registry replaces ~20
+                                    hardcoded Claude Code branches; CC-SUBST
+                                    renamed CLIENT-SUBST
+  scripts/init_skill.py           - same CLIENTS registry pattern
+  scripts/vet_skill.py            - docstring says "some clients" instead of
+                                    naming Claude Code for !`command` injection
+
+Reference-visibility pass (version 1.2.0; the routing material that tells an
+agent which bundled file to open, and the checks and teaching that go with it):
+  SKILL.md                       - routing paragraph at the top, a "Read first"
+                                    column in the request-routing table, an
+                                    imperative gate at the head of every phase that
+                                    has a reference file, and a bottom section
+                                    retitled as an index of what the skill bundles
+                                    rather than a load order
+  scripts/validate_skill.py       - new REF-PASSIVE check: a bundled reference or
+                                    agent brief named in SKILL.md but never gated
+                                    by an instruction to open it
+  references/quality-rubric.md    - two structure items, on reference reachability
+                                    and on summaries pointing at rather than
+                                    restating their reference
+  references/writing-guide.md     - "Progressive disclosure that gets read" under
+                                    Part 2, and a form-to-failure row for skipping
+                                    a reference and improvising the procedure
+  evals/evals.json                - per-eval assertions that the reference for the
+                                    phase under test was opened before the work
+
+SKILL.md was rewritten, and incorporates the original's eval, grading, and
+description-optimization workflow. All other files are new.
+
+Short passages and examples in references/ were adapted (paraphrased and
+restructured) from these permissively licensed works:
+  - obra/superpowers, skills/writing-skills (MIT, Copyright (c) 2025 Jesse Vincent):
+    the "match the form to the failure" table, rationalization-table example,
+    pressure scenarios, and wording micro-test method.
+  - mattpocock/skills, writing-for-agents (MIT, Copyright (c) 2026 Matt Pocock):
+    completion criteria, leading words, and pruning ideas.
+  - vercel-labs/skills, find-skills and the skills CLI README
+    (MIT, Copyright (c) 2026 Vercel, Inc.): discovery workflow and quality signals.
+  - agentskills/agentskills documentation (Apache-2.0): gotchas and script-design
+    examples, description and evaluation practices.
+
+For the MIT-licensed works above, the following permission notice applies:
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+
+Other ideas (no text or code) came from the sources listed in references/sources.md.
