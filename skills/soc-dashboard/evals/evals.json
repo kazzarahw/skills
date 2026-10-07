@@ -1,0 +1,100 @@
+{
+  "skill_name": "soc-dashboard",
+  "setup": "Before each run, generate fixtures into the run's outputs folder: python3 evals/files/make_fixtures.py <outputs>/fixtures. The executor builds every dashboard inside the outputs folder (never inside the skill), runs scripts/verify.py with the local Chromium, opens the PNGs, and writes transcript.md (every command run) plus report.md (the analyst report). Grading is manual (agent-judged against the assertions); scripts/verify.py is the mechanical backbone. Chromium is expected on PATH; if absent, the run records UNCHECKED for render assertions instead of inventing results.",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "suricata-alerts",
+      "prompt": "I have a Suricata eve.json export from our sensor in this folder (fixtures/eve.json). Build me an interactive SOC-analysis style dashboard from it as a single HTML file I can open in my browser. Minimal and clean, not flashy. Put the result in dashboard.html here.",
+      "expected_output": "Alerts-centred dashboard (severity hero); 10.20.2.77 -> 103.75.201.9 beacon and 185.220.101.47 scan surfaced; hostile strings inert.",
+      "files": ["evals/files/make_fixtures.py"],
+      "assertions": [
+        "dashboard.html exists and is self-contained (no external src/href/url(); verify with scripts/verify.py)",
+        "verify.py passes: ready flag, no console errors, CSP present, no innerHTML-style sinks, filter round-trip, UI click-through, two screenshots",
+        "The screenshots were opened and inspected: no overlapping labels, no clipped text, no empty panels",
+        "The beacon 10.20.2.77 -> 103.75.201.9 is surfaced as a lead with its rule and numbers, worded as consistent-with rather than a verdict",
+        "The scan from 185.220.101.47 is surfaced as a lead",
+        "Headline figures 128 (alerts) and 15 (high + critical) are correct and visible",
+        "Hostile strings from the data render as inert text (grep the built HTML for the raw payloads such as <img onerror and script alert; they must appear only as escaped JSON rendered through textContent builders, never as live tags)",
+        "The report quotes the profile NOTE lines and states what was not tested"
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "ssh-auth",
+      "prompt": "This is auth.log from our VPN gateway (fixtures/auth.log). Make me an interactive dashboard so I can see what is going on in it — single HTML file I can open locally, clean and minimal. Save it as dashboard.html in this folder.",
+      "expected_output": "Auth-centred dashboard (outcome hero); 60 failures then a deploy login from 61.177.172.14 plus sudo surfaced as one merged lead; year/zone assumption disclosed.",
+      "files": ["evals/files/make_fixtures.py"],
+      "assertions": [
+        "dashboard.html exists, self-contained, and verify.py passes (same bar as eval 1)",
+        "The outcome hero dimension is used (failures darkest), not severity",
+        "The 60-failures-then-deploy-login sequence from 61.177.172.14 is reported as ONE merged lead with the sudo follow-on, not three separate findings",
+        "The lead says 'consistent with a successful guess' (or equivalent) and asks to confirm whether the login was expected — never 'compromised'",
+        "Headline figure 69 (failed logins) is correct and visible",
+        "The report states the syslog year/zone assumption ('times as logged')",
+        "The hostile username renders as inert text"
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "zeek-conn",
+      "prompt": "Here's a Zeek conn.log from the perimeter tap (fixtures/conn.log). I want to explore what this network was doing: one HTML file I can open locally, interactive, clean and minimal. Save it as dashboard.html here.",
+      "expected_output": "Flow-centred dashboard (bytes hero, no severity panels); 110 MB transfer to 185.199.109.15 and the 45.9.148.22 sweep surfaced.",
+      "files": ["evals/files/make_fixtures.py"],
+      "assertions": [
+        "dashboard.html exists, self-contained, and verify.py passes (same bar as eval 1)",
+        "The bytes hero dimension is used and no severity panels are present",
+        "The 10.0.0.8 -> 185.199.109.15 transfer is surfaced with its share of total bytes and an expected-destination question (backup/sync/update named as benign explanations)",
+        "The 45.9.148.22 sweep is surfaced as a lead",
+        "Headline figure 163 (connections) is correct and visible"
+      ]
+    },
+    {
+      "id": 4,
+      "eval_name": "windows-events",
+      "prompt": "winevents.json is a Windows Security event export (one JSON object per line) from our domain servers (fixtures/winevents.json). Build me an interactive dashboard to dig through the logons and spot anything off. Single self-contained HTML, minimal and clean, saved as dashboard.html here.",
+      "expected_output": "Auth-centred dashboard; 30-failure burst then helpdesk RDP success, support_tmp creation plus Administrators add, and 1102 surfaced as a chain; routine alice logons produce no lead.",
+      "files": ["evals/files/make_fixtures.py"],
+      "assertions": [
+        "dashboard.html exists, self-contained, and verify.py passes (same bar as eval 1)",
+        "The failure-burst-then-RDP-success from 91.240.118.172 (helpdesk) is reported as one merged lead noting the 4720/4728 follow-on within minutes",
+        "The 1102 audit-log-cleared event is surfaced as a high-priority lead",
+        "Routine alice logons produce no lead and are not worded suspiciously",
+        "Headline figure 36 (failed logons) is correct and visible",
+        "Loopback or background noise is not presented as a finding"
+      ]
+    },
+    {
+      "id": 5,
+      "eval_name": "handoff-leads",
+      "prompt": "Build the dashboard from fixtures/eve.json as dashboard.html (verify it), then hand me the top two leads as a durable packet I can file in a knowledge base: one claim-shaped entry per lead with grade, the evidence behind it, what would confirm or kill it, plus the negatives and gaps. Save the packet as leads.md here.",
+      "expected_output": "A leads.md with LEAD-NN IDs, rule-ID + excerpt + timestamp + source file per lead, grades capped at probable (never confirmed), negatives and gaps sections, no verdict language.",
+      "files": ["evals/files/make_fixtures.py"],
+      "assertions": [
+        "dashboard.html exists and verify.py passes",
+        "leads.md holds one entry per lead with a LEAD-NN identifier (no finding-ID, CVSS, or severity-score fields)",
+        "Every entry carries a rule ID, a log excerpt, a timestamp, and the source file; repeated hits are merged with source lines listed",
+        "Every entry states observed vs asserted and a grade; no grade above probable; nothing is worded as confirmed or compromised",
+        "leads.md has negative-findings and gaps sections (gaps may state 'insufficient data found')",
+        "Passwords/tokens/PII are redacted or absent, with a note that redaction was applied where relevant",
+        "leads.md ends in a handoff block naming the exit criteria, the evidence paths, and the next skill"
+      ]
+    },
+    {
+      "id": 6,
+      "eval_name": "incident-slice",
+      "prompt": "Build the dashboard from fixtures/auth.log as dashboard.html (verify it), then hand me the brute-force-then-login sequence as an incident slice for a forensics handoff: chronological Time/Event/Source/Evidence rows, the candidate type, scope and window, and what would confirm or kill it. Save the slice as incident-slice.md here. Do not assign severity or declare an incident.",
+      "expected_output": "An incident-slice.md with 4-column chronological rows, candidate type only, observed scope/counts, confirm-or-kill lines, and no verdict or severity assignment.",
+      "files": ["evals/files/make_fixtures.py"],
+      "assertions": [
+        "dashboard.html exists and verify.py passes",
+        "incident-slice.md rows follow Time (UTC) | Event | Source | Evidence in chronological order",
+        "The slice names a candidate type only (no assigned incident type, severity, or response time)",
+        "Scope is observed hosts/services with counts; no impact, loss, or attribution verdicts",
+        "The slice states what would confirm it and what would kill it, in one line each",
+        "A forensics-shaped question left open (e.g. was the login expected) is recorded as open, not answered by assertion",
+        "incident-slice.md ends in a handoff block naming the exit criteria, the evidence paths, and the next skill"
+      ]
+    }
+  ]
+}

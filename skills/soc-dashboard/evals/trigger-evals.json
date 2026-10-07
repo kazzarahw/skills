@@ -1,0 +1,82 @@
+[
+  {
+    "query": "build a SOC dashboard from this Suricata eve.json export",
+    "should_trigger": true
+  },
+  {
+    "query": "make me a security analytics view over this auth.log",
+    "should_trigger": true
+  },
+  {
+    "query": "visualize the failed logins in this file so I can see the pattern",
+    "should_trigger": true
+  },
+  {
+    "query": "threat-hunting view over this Zeek conn.log, single HTML file",
+    "should_trigger": true
+  },
+  {
+    "query": "eyeball this Windows event export for anything off",
+    "should_trigger": true
+  },
+  {
+    "query": "plot the scans and beacons in this log",
+    "should_trigger": true
+  },
+  {
+    "query": "explore this CEF export — what fired and when",
+    "should_trigger": true
+  },
+  {
+    "query": "alert triage view for these cloud audit CSV rows",
+    "should_trigger": true
+  },
+  {
+    "query": "what is going on in this VPN gateway log",
+    "should_trigger": true
+  },
+  {
+    "query": "turn this IDS output into an interactive HTML file I can filter",
+    "should_trigger": true
+  },
+  {
+    "query": "which account is being sprayed in this log",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the traffic shape in this packet capture summary",
+    "should_trigger": true
+  },
+  {
+    "query": "write the client pentest report from these dashboard findings",
+    "should_trigger": false
+  },
+  {
+    "query": "is this host compromised? verify the intrusion",
+    "should_trigger": false
+  },
+  {
+    "query": "tail this log live and alert me on new failures",
+    "should_trigger": false
+  },
+  {
+    "query": "show attacker origins on a world map from this log",
+    "should_trigger": false
+  },
+  {
+    "query": "enrich these IPs with GeoIP and threat intel scores",
+    "should_trigger": false
+  },
+  {
+    "query": "build a sales KPI dashboard from this CRM export",
+    "should_trigger": false
+  },
+  {
+    "query": "connect this dashboard to our Splunk instance",
+    "should_trigger": false
+  },
+  {
+    "query": "what time is it?",
+    "should_trigger": false
+  }
+]
