@@ -1,0 +1,82 @@
+[
+  {
+    "query": "remember this for next time: we always freeze deploys on Fridays",
+    "should_trigger": true
+  },
+  {
+    "query": "file this decision and why we made it so a later session can find it",
+    "should_trigger": true
+  },
+  {
+    "query": "is there anything on file about the backup coverage?",
+    "should_trigger": true
+  },
+  {
+    "query": "check the wiki before you start — has anyone solved this before?",
+    "should_trigger": true
+  },
+  {
+    "query": "turn these findings into knowledge pages and link them together",
+    "should_trigger": true
+  },
+  {
+    "query": "what did we conclude about the API limits last month?",
+    "should_trigger": true
+  },
+  {
+    "query": "link the release page to the rollback decision",
+    "should_trigger": true
+  },
+  {
+    "query": "is anything on file contradicted by this new runbook?",
+    "should_trigger": true
+  },
+  {
+    "query": "we keep re-deriving the rollback rule every incident — make it stick",
+    "should_trigger": true
+  },
+  {
+    "query": "record the migration steps we agreed on, with sources",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I keep knowledge across sessions in this repo?",
+    "should_trigger": true
+  },
+  {
+    "query": "the test suite is flaky — rerun it until green",
+    "should_trigger": false
+  },
+  {
+    "query": "write the client pentest report from these findings",
+    "should_trigger": false
+  },
+  {
+    "query": "is this vulnerability exploitable? verify the PoC",
+    "should_trigger": false
+  },
+  {
+    "query": "who owns example.com? investigate the domain",
+    "should_trigger": false
+  },
+  {
+    "query": "what is the capital of Peru?",
+    "should_trigger": false
+  },
+  {
+    "query": "summarise this article for me, no need to file anything",
+    "should_trigger": false
+  },
+  {
+    "query": "delete the wiki page about the old vendor",
+    "should_trigger": false
+  },
+  {
+    "query": "send the runbook to the team and publish the notes",
+    "should_trigger": false
+  },
+  {
+    "query": "what time is it?",
+    "should_trigger": false
+  }
+]

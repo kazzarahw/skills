@@ -1,0 +1,87 @@
+{
+  "skill_name": "wiki",
+  "setup": "Each run gets a fresh outputs folder. The executor works only inside it: initialise the wiki there (python3 <skill>/scripts/wiki.py init --wiki <outputs>/wiki), file any raw captures under <outputs>/wiki/raw/ or the case folder, and write a transcript.md of every wiki.py invocation plus a notes.md of judgments made. Never touch anything outside the outputs folder.",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "record-retrieve",
+      "prompt": "First create notes/deploy-2026-10-01.md in your outputs folder with the content 'Deploy steps: freeze, snapshot, canary. Canary owner owns the rollback decision.' Then file these two findings in the wiki and answer from it. Finding one: our deploy checklist — the three steps from the notes file. Finding two: the release baton pattern — whoever runs the canary owns the rollback decision. After filing, answer this without re-reading the notes file: who owns the rollback decision, and what are the three deploy steps? Write transcript.md (every wiki.py command you ran) and notes.md (judgments: page types chosen, links added) into the outputs folder.",
+      "expected_output": "An entity page and a concept page, linked, listed in index.md, logged; the answer cites both pages.",
+      "files": [],
+      "assertions": [
+        "The wiki contains exactly one entity page and one concept page covering the two findings",
+        "The concept page links the entity page with a [[wikilink]] and index.md lists both pages",
+        "log.md carries ingest lines for both pages",
+        "The answer names the canary owner as the rollback owner and lists freeze, snapshot, canary",
+        "The transcript shows index.md was read before any add (retrieval-first), not only search"
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "dupe-gate",
+      "prompt": "First set up this precondition inside your outputs wiki, as if a prior session left it: capture a raw file with the three deploy steps (freeze, snapshot, canary) and add an entity page titled 'Deploy Checklist' citing it. Then file this new note — create notes/deploy-2026-10-08.md with the content 'deploy checklist is freeze, snapshot, canary, verify' and file it: check the wiki first. Do not create a second page for the same thing — update or supersede as the content warrants. Write transcript.md and notes.md into the outputs folder.",
+      "expected_output": "No duplicate page; the existing page updated in place (same checklist, new step) or superseded with bilateral links; search-before-create visible in the transcript.",
+      "files": [],
+      "assertions": [
+        "The transcript shows a search with spelling or title variants before any write",
+        "The wiki contains exactly one page titled Deploy Checklist (case-insensitive), not two files differing by case, suffix, or folder",
+        "If updated in place, the page lists all four steps and its updated date moved; if superseded, the old page is status invalidated with text intact plus bilateral links and a supersede log line",
+        "validate-equivalent: the wiki lints with no critical findings"
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "supersede",
+      "prompt": "First set up this precondition inside your outputs wiki, as if a prior session left it: a claim page stating the nightly backup covers the uploads volume, graded probable from a single runbook. Then create notes/backup-2026-10-07.md with the content 'uploads volume was excluded from the backup job; incident INC-42 followed' and adjudicate: keep history intact, mark the old claim, and file the conclusion where a later session will find it. Write transcript.md and notes.md into the outputs folder.",
+      "expected_output": "Old claim invalidated with text intact, new claim page with its own sources, synthesis adjudicating with rejected-alternative and negative-findings sections, supersede log line.",
+      "files": [],
+      "assertions": [
+        "The old claim page still exists with its original text and status invalidated",
+        "A new claim page carries the exclusion evidence with its own sources and date",
+        "A synthesis page adjudicates between them with rejected-alternative and negative-findings sections",
+        "Old and new pages link each other and log.md carries a supersede line",
+        "Neither page was overwritten: the original wording is recoverable from the old file"
+      ]
+    },
+    {
+      "id": 4,
+      "eval_name": "provenance-gate",
+      "prompt": "First create notes/api-limits.md in your outputs folder with the content 'API rate limit: 100 requests per minute (docs v3, checked today)'. Then file these three items. Item one: 'the API rate limit is 100 requests per minute' — you have genuinely read notes/api-limits.md. Item two: 'the staging database is slow because of missing indexes' — a guess from a teammate, no source. Item three: 'everyone knows Postgres 16 is faster than 15' — no source at all. Follow the skill exactly. Write transcript.md and notes.md into the outputs folder.",
+      "expected_output": "Item one filed as observed with grade; item two filed as inferred/asserted with its guess status explicit and what-would-confirm-it stated; item three refused or retracted, never filed as fact.",
+      "files": [],
+      "assertions": [
+        "The rate-limit page cites notes/api-limits.md with provenance observed",
+        "The staging-database page is graded inferred (or probable at most), states it is a teammate guess, and says what evidence would confirm it",
+        "No page states the Postgres claim as an observation-level fact; if present it is graded and attributed or absent",
+        "An unsourced add attempt, if made, was refused by the script (exit 2) rather than forced"
+      ]
+    },
+    {
+      "id": 5,
+      "eval_name": "lint-breakage",
+      "prompt": "First build a three-page wiki in your outputs folder: an entity page 'Deploy Checklist' plus two pages that link to it (a concept and a synthesis), all lint-clean. Then run lint and report what it finds. Then rename the entity page's title from 'Deploy Checklist' to 'Release Checklist' by editing its title field, run lint again, and fix what broke following the skill — without creating a stub page under the old name. Write transcript.md and notes.md into the outputs folder.",
+      "expected_output": "First lint clean or warnings-only with judgment; post-rename lint reports broken-wikilink critical; fix restores exact titles on inbound links; --fix used only for index drift, bodies otherwise untouched.",
+      "files": [],
+      "assertions": [
+        "The transcript shows a lint run before the rename with its exit code recorded",
+        "Post-rename lint exits 2 with a broken-wikilink critical finding",
+        "All inbound links were restored to the exact new title; no stub page exists under the old name",
+        "Final lint exits 0, or exits 1 with remaining warnings explicitly judged intentional in notes.md",
+        "--fix was not used to alter any page body, title, or frontmatter value"
+      ]
+    },
+    {
+      "id": 6,
+      "eval_name": "negatives-gaps",
+      "prompt": "Investigate whether the wiki's filed backup coverage has any evidence about the search index volume, then file a synthesis of what the wiki does and does not establish about backup coverage. The wiki genuinely has nothing on the search index volume — say so properly. Write transcript.md and notes.md into the outputs folder.",
+      "expected_output": "A synthesis with Negative findings (what was searched, scope, window) and Gaps ('insufficient data found') sections; absence stated only for sources that worked.",
+      "files": [],
+      "assertions": [
+        "The synthesis contains a Negative findings section naming what was searched and over what scope",
+        "The synthesis contains a Gaps section with the literal string 'insufficient data found'",
+        "The transcript shows the wiki was actually searched (search command with the volume name) before the absence was stated",
+        "No failed or erroring lookup is described as an absence"
+      ]
+    }
+  ]
+}
